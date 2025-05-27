@@ -6,14 +6,21 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 
 class NasabahController extends Controller
 {
     public function index()
     {
         // Fetch all nasabah users
-        $nasabahs = User::where('role', 'nasabah')->get();
-
+        $nasabahs = \App\Models\User::where('role', 'nasabah')
+            ->get()
+            ->map(function($n) {
+                $n->total_pendapatan = DB::table('transaksi_setor')
+                    ->where('nasabah_id', $n->id)
+                    ->sum('total_pendapatan');
+                return $n;
+            });
         return view('admin.nasabah.index', compact('nasabahs'));
    
     }

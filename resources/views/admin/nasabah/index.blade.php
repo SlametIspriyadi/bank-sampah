@@ -24,7 +24,7 @@
                 <td class="border px-4 py-2">{{ $n->name }}</td>
                 <td class="border px-4 py-2">{{ $n->email }}</td>
                 <td class="border px-4 py-2">{{ $n->no_hp }}</td>
-                <td class="border px-4 py-2">Rp {{ number_format($n->saldo, 0, ',', '.') }}</td>
+                <td class="border px-4 py-2">Rp {{ number_format($n->total_pendapatan ?? 0, 0, ',', '.') }}</td>
             </tr>
             @endforeach
         </tbody>
