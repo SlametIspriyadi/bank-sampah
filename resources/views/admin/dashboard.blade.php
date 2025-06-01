@@ -31,19 +31,19 @@
                     <th class="px-4 py-2">Total</th>
                 </tr>
             </thead>
-            {{-- <tbody>
+            <tbody>
                 @forelse($recentTransaksi ?? [] as $trx)
                 <tr>
-                    <td class="border px-4 py-2">{{ $trx->tgl_setor }}</td>
-                    <td class="border px-4 py-2">{{ $trx->nasabah->name ?? '-' }}</td>
-                    <td class="border px-4 py-2">{{ $trx->sampah->jenis_sampah ?? '-' }}</td>
-                    <td class="border px-4 py-2">{{ $trx->berat }} {{ $trx->sampah->satuan ?? '' }}</td>
-                    <td class="border px-4 py-2">Rp {{ number_format($trx->total_pendapatan, 0, ',', '.') }}</td>
+                    <td class="border px-4 py-2">{{ $trx->tgl_setor ?? '-' }}</td>
+                    <td class="border px-4 py-2">{{ isset($trx->nasabah) && is_object($trx->nasabah) ? $trx->nasabah->name : '-' }}</td>
+                    <td class="border px-4 py-2">{{ isset($trx->sampah) && is_object($trx->sampah) ? $trx->sampah->jenis_sampah : '-' }}</td>
+                    <td class="border px-4 py-2">{{ $trx->berat ?? '-' }} {{ (isset($trx->sampah) && is_object($trx->sampah)) ? $trx->sampah->satuan : '' }}</td>
+                    <td class="border px-4 py-2">Rp {{ number_format($trx->total_pendapatan ?? 0, 0, ',', '.') }}</td>
                 </tr>
                 @empty
                 <tr><td colspan="5" class="text-center py-4">Tidak ada data</td></tr>
                 @endforelse
-            </tbody> --}}
+            </tbody>
         </table>
     </div>
 </div>

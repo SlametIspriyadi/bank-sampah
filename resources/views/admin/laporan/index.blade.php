@@ -17,7 +17,7 @@
             </tr>
         </thead>
         <tbody>
-            {{-- @foreach($laporan as $lap)
+            @foreach($laporan as $lap)
             <tr>
                 <td class="border px-4 py-2">{{ $lap->tgl_setor }}</td>
                 <td class="border px-4 py-2">{{ $lap->nasabah->name ?? '-' }}</td>
@@ -25,7 +25,7 @@
                 <td class="border px-4 py-2">{{ $lap->berat }} {{ $lap->sampah->satuan ?? '' }}</td>
                 <td class="border px-4 py-2">Rp {{ number_format($lap->total_pendapatan, 0, ',', '.') }}</td>
             </tr>
-            @endforeach --}}
+            @endforeach
         </tbody>
     </table>
 </div>

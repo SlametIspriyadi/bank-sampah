@@ -4,11 +4,10 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\NasabahController;
 use App\Http\Controllers\Admin\SampahController;
 use App\Http\Controllers\TransaksiController;
+use App\Http\Controllers\Admin\LaporanController;
 
 Route::prefix('admin')->name('admin.')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('admin.dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
 
     // CRUD Nasabah
     Route::get('/nasabah', [NasabahController::class, 'index'])->name('nasabah.index');
@@ -42,9 +41,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     //     // ]
     // ]);
 
-    Route::get('/laporan', function () {
-        return view('admin.laporan.index');
-    })->name('laporan.index');
+    Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
 });
 
 Route::post('/logout', function () {

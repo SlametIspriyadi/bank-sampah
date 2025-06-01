@@ -23,10 +23,8 @@
                 <td class="border px-4 py-2">{{ $trx->tgl_setor }}</td>
                 <td class="border px-4 py-2">{{ $trx->nasabah_name ?? '-' }}</td>
                 <td class="border px-4 py-2">
-                    @if($trx->jenis_sampah)
-                        @foreach(preg_split('/,\s*/', $trx->jenis_sampah) as $jenis)
-                            <span class="inline-block bg-gray-200 rounded px-2 py-1 mr-1 mb-1 text-xs">{{ $jenis }}</span>
-                        @endforeach
+                    @if(isset($trx->jenis_sampah) && $trx->jenis_sampah)
+                        {{ collect(preg_split('/,\s*/', $trx->jenis_sampah))->implode(', ') }}
                     @else
                         -
                     @endif
