@@ -18,13 +18,16 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
-        'email',
-        'password',
-        //'username',
+        'no_reg',
+        'jenis_kelamin',
+        'tempat_lahir',
+        'tgl_lahir',
         'no_hp',
         'alamat',
         'saldo',
-        'role', 
+        'role',
+        'tgl_registrasi',
+        'password',
     ];
 
     /**
@@ -45,6 +48,8 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return [
+            'tgl_registrasi' => 'datetime',
+            'tgl_lahir' => 'date',
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];

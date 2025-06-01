@@ -20,10 +20,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/sampah', [SampahController::class, 'index'])->name('sampah.index');
     Route::get('/sampah/create', [SampahController::class, 'create'])->name('sampah.create');
     Route::post('/sampah/store', [SampahController::class, 'store'])->name('sampah.store');
-    Route::get('/nasabah/{id}/edit', [NasabahController::class, 'edit'])->name('sampah.edit');
-    // Tambahkan update & delete jika diperlukan
-    // Route::put('/nasabah/{id}', [NasabahController::class, 'update'])->name('admin.nasabah.update');
-    // Route::delete('/nasabah/{id}', [NasabahController::class, 'destroy'])->name('admin.nasabah.destroy');
+    Route::get('/sampah/{id}/edit', [SampahController::class, 'edit'])->name('sampah.edit');
+    Route::put('/sampah/{id}', [SampahController::class, 'update'])->name('sampah.update');
+    Route::delete('/sampah/{id}', [SampahController::class, 'destroy'])->name('sampah.destroy');
 
     // CRUD Transaksi Setor
     Route::get('/transaksi', [TransaksiController::class, 'index'])->name('transaksi.index');

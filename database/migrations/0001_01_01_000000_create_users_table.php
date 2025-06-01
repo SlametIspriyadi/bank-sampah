@@ -15,11 +15,15 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             //$table->string('username', 50)->unique();
-            $table->string('no_hp', 20)->nullable();
+            $table->string('no_reg', 30)->unique(); // nomor register pengganti email
+            $table->enum('jenis_kelamin', ['L', 'P'])->nullable();
+            $table->string('tempat_lahir', 100)->nullable();
+            $table->date('tgl_lahir')->nullable();
+            $table->string('no_hp', 20)->nullable(); // no telp
             $table->text('alamat')->nullable();
             $table->decimal('saldo', 12, 2)->default(0);
             $table->enum('role', ['admin', 'nasabah'])->default('nasabah');
-            $table->string('email')->unique();
+            $table->timestamp('tgl_registrasi')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();

@@ -24,7 +24,9 @@
                 <td class="border px-4 py-2">{{ $trx->nasabah_name ?? '-' }}</td>
                 <td class="border px-4 py-2">
                     @if($trx->jenis_sampah)
-                        {{ collect(explode(',', $trx->jenis_sampah))->map(fn($j) => trim($j))->join(', ') }}
+                        @foreach(preg_split('/,\s*/', $trx->jenis_sampah) as $jenis)
+                            <span class="inline-block bg-gray-200 rounded px-2 py-1 mr-1 mb-1 text-xs">{{ $jenis }}</span>
+                        @endforeach
                     @else
                         -
                     @endif

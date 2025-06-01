@@ -11,6 +11,5 @@ class Sampah extends Model
         'jenis_sampah',
         'satuan',
         'harga',
-        'status',
     ];
 }

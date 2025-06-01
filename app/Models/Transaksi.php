@@ -13,6 +13,7 @@ class Transaksi extends Model
         'admin_id', // relasi ke users (role=admin)
         'berat',
         'harga',
+        'jenis_sampah', // jenis sampah yang disetor
         'tgl_setor',
         'total_pendapatan',
         'status',

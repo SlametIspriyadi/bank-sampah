@@ -8,16 +8,28 @@
     <form action="{{ route('admin.nasabah.store') }}" method="POST">
         @csrf
         <div class="mb-4">
+            <label class="block mb-1 font-semibold">No Registrasi</label>
+            <input type="text" name="no_reg" class="w-full border px-3 py-2 rounded" required>
+        </div>
+        <div class="mb-4">
             <label class="block mb-1 font-semibold">Nama</label>
             <input type="text" name="name" class="w-full border px-3 py-2 rounded" required>
         </div>
-        {{-- <div class="mb-4">
-            <label class="block mb-1 font-semibold">Username</label>
-            <input type="text" name="username" class="w-full border px-3 py-2 rounded" required>
-        </div> --}}
         <div class="mb-4">
-            <label class="block mb-1 font-semibold">Email</label>
-            <input type="email" name="email" class="w-full border px-3 py-2 rounded" required>
+            <label class="block mb-1 font-semibold">Jenis Kelamin</label>
+            <select name="jenis_kelamin" class="w-full border px-3 py-2 rounded" required>
+                <option value="">Pilih</option>
+                <option value="L">Laki-laki</option>
+                <option value="P">Perempuan</option>
+            </select>
+        </div>
+        <div class="mb-4">
+            <label class="block mb-1 font-semibold">Tempat Lahir</label>
+            <input type="text" name="tempat_lahir" class="w-full border px-3 py-2 rounded" required>
+        </div>
+        <div class="mb-4">
+            <label class="block mb-1 font-semibold">Tanggal Lahir</label>
+            <input type="date" name="tgl_lahir" class="w-full border px-3 py-2 rounded" required>
         </div>
         <div class="mb-4">
             <label class="block mb-1 font-semibold">No HP</label>
@@ -30,10 +42,6 @@
         <div class="mb-4">
             <label class="block mb-1 font-semibold">Password</label>
             <input type="password" name="password" class="w-full border px-3 py-2 rounded" required>
-        </div>
-        <div class="mb-4">
-            <label class="block mb-1 font-semibold">Saldo Awal</label>
-            <input type="number" name="saldo" class="w-full border px-3 py-2 rounded" min="0" value="0">
         </div>
         <input type="hidden" name="role" value="nasabah">
         <div class="flex justify-end">

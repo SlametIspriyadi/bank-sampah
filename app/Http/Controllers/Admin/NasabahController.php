@@ -16,9 +16,10 @@ class NasabahController extends Controller
         $nasabahs = \App\Models\User::where('role', 'nasabah')
             ->get()
             ->map(function($n) {
-                $n->total_pendapatan = DB::table('transaksi_setor')
+                $total = DB::table('transaksi_setor')
                     ->where('nasabah_id', $n->id)
-                    ->sum('total_pendapatan');
+                    ->sum(DB::raw('total_pendapatan * 0.98'));
+                $n->total_pendapatan = $total;
                 return $n;
             });
         return view('admin.nasabah.index', compact('nasabahs'));
@@ -39,23 +40,27 @@ class NasabahController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            //'username' => 'required|string|max:50|unique:users,username',
-            'email' => 'required|email|unique:users,email',
+            'no_reg' => 'required|string|max:30|unique:users,no_reg',
+            'jenis_kelamin' => 'required|in:L,P',
+            'tempat_lahir' => 'required|string|max:100',
+            'tgl_lahir' => 'required|date',
             'no_hp' => 'nullable|string|max:20',
             'alamat' => 'nullable|string',
             'password' => 'required|string|min:6',
-            'saldo' => 'nullable|numeric|min:0',
         ]);
 
         $user = User::create([
             'name' => $validated['name'],
-            //'username' => $validated['username'],
-            'email' => $validated['email'],
+            'no_reg' => $validated['no_reg'],
+            'jenis_kelamin' => $validated['jenis_kelamin'],
+            'tempat_lahir' => $validated['tempat_lahir'],
+            'tgl_lahir' => $validated['tgl_lahir'],
             'no_hp' => $validated['no_hp'] ?? null,
             'alamat' => $validated['alamat'] ?? null,
             'password' => Hash::make($validated['password']),
-            'saldo' => $validated['saldo'] ?? 0,
+            'saldo' => 0, // saldo awal selalu 0, dihitung dari transaksi setor
             'role' => 'nasabah',
+            'tgl_registrasi' => now(),
         ]);
 
         return redirect()->route('admin.nasabah.index')->with('success', 'Nasabah berhasil ditambahkan!');

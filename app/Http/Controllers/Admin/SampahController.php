@@ -23,13 +23,37 @@ class SampahController extends Controller
     {
         $validated = $request->validate([
             'jenis_sampah' => 'required|string|max:100',
-            'satuan' => 'required|in:Kg,g,L,pcs',
+            'satuan' => 'required|in:Kg,Satu',
             'harga' => 'required|numeric|min:0',
-            'status' => 'required|in:aktif,nonaktif',
         ]);
 
         Sampah::create($validated);
 
         return redirect()->route('admin.sampah.index')->with('success', 'Data sampah berhasil ditambahkan.');
+    }
+
+    public function edit($id)
+    {
+        $sampah = Sampah::findOrFail($id);
+        return view('admin.sampah.edit', compact('sampah'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'jenis_sampah' => 'required|string|max:100',
+            'satuan' => 'required|in:Kg,Satu',
+            'harga' => 'required|numeric|min:0',
+        ]);
+        $sampah = Sampah::findOrFail($id);
+        $sampah->update($validated);
+        return redirect()->route('admin.sampah.index')->with('success', 'Data sampah berhasil diupdate.');
+    }
+
+    public function destroy($id)
+    {
+        $sampah = Sampah::findOrFail($id);
+        $sampah->delete();
+        return redirect()->route('admin.sampah.index')->with('success', 'Data sampah berhasil dihapus.');
     }
 }
