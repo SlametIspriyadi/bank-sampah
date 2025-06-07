@@ -5,10 +5,14 @@
 
 @section('content')
 <div class="bg-white p-6 rounded shadow">
-    <h2 class="text-xl font-semibold mb-4">Laporan Transaksi</h2>
+    <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-semibold">Laporan Transaksi</h2>
+    </div>
+    <div class="overflow-x-auto">
     <table class="min-w-full">
         <thead>
-            <tr>
+            <tr class="table-header-custom">
+                <th class="px-4 py-2">No</th>
                 <th class="px-4 py-2">Tanggal</th>
                 <th class="px-4 py-2">Nasabah</th>
                 <th class="px-4 py-2">Jenis Sampah</th>
@@ -17,8 +21,9 @@
             </tr>
         </thead>
         <tbody>
-            @foreach($laporan as $lap)
+            @foreach($laporan as $i => $lap)
             <tr>
+                <td class="border px-4 py-2">{{ $i+1 }}</td>
                 <td class="border px-4 py-2">{{ $lap->tgl_setor }}</td>
                 <td class="border px-4 py-2">{{ $lap->nasabah->name ?? '-' }}</td>
                 <td class="border px-4 py-2">{{ $lap->sampah->jenis_sampah ?? '-' }}</td>
@@ -28,5 +33,6 @@
             @endforeach
         </tbody>
     </table>
+    </div>
 </div>
 @endsection

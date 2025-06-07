@@ -1,34 +1,41 @@
 @extends('admin.base')
 
 @section('title', 'Data Nasabah')
-@section('header', 'Data Nasabah')
+@section('header', 'Data nasabah')
 
 @section('content')
 <div class="bg-white p-6 rounded shadow">
-    <h2 class="text-xl font-semibold mb-4">Daftar Nasabah</h2>
-    <div class="mb-4">
-        <a href="{{ route('admin.nasabah.create') }}" class="bg-blue-500 text-white px-4 py-2 rounded">Tambah Nasabah</a>
+    <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-semibold">Data nasabah</h2>
+        <a href="{{ route('admin.nasabah.create') }}" class="btn-green px-4 py-2 rounded">Tambah</a>
+    </div>
     <div class="overflow-x-auto">
     <table class="min-w-full">
         <thead>
-            <tr>
-                <th class="px-4 py-2">No Reg</th>
-                <th class="px-4 py-2">Nama</th>
-                <th class="px-4 py-2">JK</th>
-                <th class="px-4 py-2">Tempat, Tgl Lahir</th>
-                <th class="px-4 py-2">No HP</th>
+            <tr class="table-header-custom">
+                <th class="px-4 py-2">No</th>
+                <th class="px-4 py-2">Nama Iten</th>
+                <th class="px-4 py-2">Alamat</th>
+                <th class="px-4 py-2">Email</th>
+                <th class="px-4 py-2">No tlp</th>
                 <th class="px-4 py-2">Saldo</th>
+                <th class="px-4 py-2">Action</th>
             </tr>
         </thead>
         <tbody>
-            @foreach($nasabahs as $n)
+            @foreach($nasabahs as $i => $n)
             <tr>
-                <td class="border px-4 py-2">{{ $n->no_reg }}</td>
+                <td class="border px-4 py-2">{{ $i+1 }}</td>
                 <td class="border px-4 py-2">{{ $n->name }}</td>
-                <td class="border px-4 py-2">{{ $n->jenis_kelamin }}</td>
-                <td class="border px-4 py-2">{{ $n->tempat_lahir }}, {{ $n->tgl_lahir ? date('d-m-Y', strtotime($n->tgl_lahir)) : '' }}</td>
+                <td class="border px-4 py-2">{{ $n->alamat }}</td>
+                <td class="border px-4 py-2">{{ $n->email }}</td>
                 <td class="border px-4 py-2">{{ $n->no_hp }}</td>
-                <td class="border px-4 py-2">Rp {{ number_format($n->total_pendapatan ?? 0, 0, ',', '.') }}</td>
+                <td class="border px-4 py-2">Rp.{{ number_format($n->total_pendapatan ?? 0, 0, ',', '.') }}</td>
+                <td class="border px-4 py-2">
+                    <a href="#" class="inline-block mr-2"><i class="fa fa-eye"></i></a>
+                    <a href="#" class="inline-block mr-2"><i class="fa fa-edit"></i></a>
+                    <a href="#" class="inline-block"><i class="fa fa-trash"></i></a>
+                </td>
             </tr>
             @endforeach
         </tbody>
