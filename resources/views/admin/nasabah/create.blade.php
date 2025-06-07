@@ -43,6 +43,10 @@
             <label class="block mb-1 font-semibold">Password</label>
             <input type="password" name="password" class="w-full border px-3 py-2 rounded" required>
         </div>
+        <div class="mb-4">
+            <label class="block mb-1 font-semibold">Tanggal Registrasi</label>
+            <input type="date" name="tgl_registrasi" class="w-full border px-3 py-2 rounded" required>
+        </div>
         <input type="hidden" name="role" value="nasabah">
         <div class="flex justify-end">
             <button type="submit" class="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700">Simpan</button>

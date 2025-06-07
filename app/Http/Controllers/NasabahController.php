@@ -22,12 +22,15 @@ class NasabahController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
+            'no_reg' => 'required|string|max:30|unique:users,no_reg',
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|string|min:6',
+            'jenis_kelamin' => 'required|in:L,P',
+            'tempat_lahir' => 'required|string|max:100',
+            'tgl_lahir' => 'required|date',
             'no_hp' => 'nullable|string|max:20',
             'alamat' => 'nullable|string',
-            'saldo' => 'nullable|numeric|min:0',
+            'password' => 'required|string|min:6',
+            'tgl_registrasi' => 'required|date',
         ]);
         $validated['password'] = Hash::make($validated['password']);
         $validated['role'] = 'nasabah';

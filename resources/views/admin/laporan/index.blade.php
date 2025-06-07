@@ -15,8 +15,7 @@
                 <th class="px-4 py-2">No</th>
                 <th class="px-4 py-2">Tanggal</th>
                 <th class="px-4 py-2">Nasabah</th>
-                <th class="px-4 py-2">Jenis Sampah</th>
-                <th class="px-4 py-2">Berat</th>
+                <th class="px-4 py-2">Detil Sampah</th>
                 <th class="px-4 py-2">Total</th>
             </tr>
         </thead>
@@ -26,8 +25,7 @@
                 <td class="border px-4 py-2">{{ $i+1 }}</td>
                 <td class="border px-4 py-2">{{ $lap->tgl_setor }}</td>
                 <td class="border px-4 py-2">{{ $lap->nasabah->name ?? '-' }}</td>
-                <td class="border px-4 py-2">{{ $lap->sampah->jenis_sampah ?? '-' }}</td>
-                <td class="border px-4 py-2">{{ $lap->berat }} {{ $lap->sampah->satuan ?? '' }}</td>
+                <td class="border px-4 py-2">{{ $lap->detil_sampah ?? '-' }}</td>
                 <td class="border px-4 py-2">Rp {{ number_format($lap->total_pendapatan, 0, ',', '.') }}</td>
             </tr>
             @endforeach

@@ -24,14 +24,15 @@ return new class extends Migration
             $table->decimal('saldo', 12, 2)->default(0);
             $table->enum('role', ['admin', 'nasabah'])->default('nasabah');
             $table->timestamp('tgl_registrasi')->nullable();
-            $table->timestamp('email_verified_at')->nullable();
+            //$table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
-            $table->string('email')->primary();
+            //$table->string('email')->primary();
+            $table->string('no_reg')->primary();
             $table->string('token');
             $table->timestamp('created_at')->nullable();
         });

@@ -16,7 +16,7 @@
             <select name="nasabah_id" class="w-full border px-3 py-2 rounded" required>
                 <option value="">-- Pilih Nasabah --</option>
                 @foreach($nasabah as $n)
-                    <option value="{{ $n->id }}">{{ $n->name }}</option>
+                    <option value="{{ $n->id }}">{{ $n->no_reg }} - {{ $n->name }}</option>
                 @endforeach
             </select>
         </div>
@@ -26,7 +26,7 @@
                 <select name="sampah_id[]" class="w-full border px-3 py-2 rounded mb-2" required>
                     <option value="">-- Pilih Jenis Sampah --</option>
                     @foreach($sampah as $s)
-                        <option value="{{ $s->sampah_id }}">{{ $s->jenis_sampah }}</option>
+                        <option value="{{ $s->sampah_id }}">{{ $s->jenis_sampah }} - {{ $s->satuan }}</option>
                     @endforeach
                 </select>
                 <label class="block mb-1 font-semibold">Berat</label>
