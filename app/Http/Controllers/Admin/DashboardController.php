@@ -13,12 +13,38 @@ class DashboardController extends Controller
     public function index()
     {
         $nasabahCount = User::where('role', 'nasabah')->count();
-        $sampahCount = Sampah::count();
-        $transaksiCount = Transaksi::count();
-        $recentTransaksi = Transaksi::with(['nasabah', 'sampah'])
-            ->orderBy('tgl_setor', 'desc')
-            ->limit(5)
-            ->get();
-        return view('admin.dashboard', compact('nasabahCount', 'sampahCount', 'transaksiCount', 'recentTransaksi'));
+        $transaksiCount = \App\Models\Transaksi::count();
+
+        // Data grafik bulanan (tahun ini)
+        $year = date('Y');
+        $bulanLabels = [
+            'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'
+        ];
+        $bulanData = array_fill(0, 12, 0);
+        $bulanan = \App\Models\Transaksi::selectRaw('MONTH(tgl_setor) as bulan, COUNT(*) as jumlah')
+            ->whereYear('tgl_setor', $year)
+            ->groupBy('bulan')
+            ->pluck('jumlah', 'bulan');
+        foreach ($bulanan as $bulan => $jumlah) {
+            $bulanData[$bulan-1] = (int)$jumlah; // pastikan integer
+        }
+
+        // Data grafik tahunan (5 tahun terakhir)
+        $tahunLabels = [];
+        $tahunData = [];
+        $tahunSekarang = (int)date('Y');
+        for ($i = $tahunSekarang-4; $i <= $tahunSekarang; $i++) {
+            $tahunLabels[] = (string)$i;
+            $tahunData[] = (int)\App\Models\Transaksi::whereYear('tgl_setor', $i)->count(); // pastikan integer
+        }
+
+        return view('admin.dashboard', compact(
+            'nasabahCount',
+            'transaksiCount',
+            'bulanLabels',
+            'bulanData',
+            'tahunLabels',
+            'tahunData'
+        ));
     }
 }

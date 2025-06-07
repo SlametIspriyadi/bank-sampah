@@ -4,47 +4,89 @@
 @section('header', 'Dashboard')
 
 @section('content')
-<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
     <div class="bg-white p-6 rounded shadow">
         <div class="text-gray-500">Total Nasabah</div>
         <div class="text-2xl font-bold">{{ $nasabahCount ?? '-' }}</div>
-    </div>
-    <div class="bg-white p-6 rounded shadow">
-        <div class="text-gray-500">Total Sampah</div>
-        <div class="text-2xl font-bold">{{ $sampahCount ?? '-' }}</div>
     </div>
     <div class="bg-white p-6 rounded shadow">
         <div class="text-gray-500">Total Transaksi</div>
         <div class="text-2xl font-bold">{{ $transaksiCount ?? '-' }}</div>
     </div>
 </div>
-<div class="mt-8">
-    <h2 class="text-xl font-semibold mb-4">Riwayat Transaksi Terbaru</h2>
-    <div class="bg-white rounded shadow overflow-x-auto">
-        <table class="min-w-full">
-            <thead>
-                <tr>
-                    <th class="px-4 py-2">Tanggal</th>
-                    <th class="px-4 py-2">Nasabah</th>
-                    <th class="px-4 py-2">Jenis Sampah</th>
-                    <th class="px-4 py-2">Berat</th>
-                    <th class="px-4 py-2">Total</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse($recentTransaksi ?? [] as $trx)
-                <tr>
-                    <td class="border px-4 py-2">{{ $trx->tgl_setor ?? '-' }}</td>
-                    <td class="border px-4 py-2">{{ isset($trx->nasabah) && is_object($trx->nasabah) ? $trx->nasabah->name : '-' }}</td>
-                    <td class="border px-4 py-2">{{ isset($trx->sampah) && is_object($trx->sampah) ? $trx->sampah->jenis_sampah : '-' }}</td>
-                    <td class="border px-4 py-2">{{ $trx->berat ?? '-' }} {{ (isset($trx->sampah) && is_object($trx->sampah)) ? $trx->sampah->satuan : '' }}</td>
-                    <td class="border px-4 py-2">Rp {{ number_format($trx->total_pendapatan ?? 0, 0, ',', '.') }}</td>
-                </tr>
-                @empty
-                <tr><td colspan="5" class="text-center py-4">Tidak ada data</td></tr>
-                @endforelse
-            </tbody>
-        </table>
+<div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div class="bg-white p-6 rounded shadow">
+        <h2 class="text-lg font-semibold mb-4">Grafik Transaksi Bulanan (Tahun Ini)</h2>
+        <canvas id="chartBulanan" height="120"></canvas>
+    </div>
+    <div class="bg-white p-6 rounded shadow">
+        <h2 class="text-lg font-semibold mb-4">Grafik Transaksi Tahunan</h2>
+        <canvas id="chartTahunan" height="120"></canvas>
     </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const bulanLabels = @json($bulanLabels ?? []);
+    const bulanData = @json($bulanData ?? []);
+    const tahunLabels = @json($tahunLabels ?? []);
+    const tahunData = @json($tahunData ?? []);
+    // Bulanan
+    new Chart(document.getElementById('chartBulanan').getContext('2d'), {
+        type: 'bar',
+        data: {
+            labels: bulanLabels,
+            datasets: [{
+                label: 'Jumlah Transaksi',
+                data: bulanData,
+                backgroundColor: 'rgba(34,197,94,0.7)',
+                borderColor: 'rgba(34,197,94,1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1,
+                        precision: 0,
+                        callback: function(value) { return Number.isInteger(value) ? value : null; }
+                    }
+                }
+            }
+        }
+    });
+    // Tahunan
+    new Chart(document.getElementById('chartTahunan').getContext('2d'), {
+        type: 'line',
+        data: {
+            labels: tahunLabels,
+            datasets: [{
+                label: 'Jumlah Transaksi',
+                data: tahunData,
+                backgroundColor: 'rgba(16,185,129,0.3)',
+                borderColor: 'rgba(16,185,129,1)',
+                borderWidth: 2,
+                fill: true,
+                tension: 0.3
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1,
+                        precision: 0,
+                        callback: function(value) { return Number.isInteger(value) ? value : null; }
+                    }
+                }
+            }
+        }
+    });
+</script>
 @endsection
