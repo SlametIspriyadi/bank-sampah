@@ -31,6 +31,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/transaksi', [TransaksiController::class, 'index'])->name('transaksi.index');
     Route::get('/transaksi/create', [TransaksiController::class, 'create'])->name('transaksi.create');
     Route::post('/transaksi/store', [TransaksiController::class, 'store'])->name('transaksi.store');
+    Route::get('/transaksi/export/pdf', [TransaksiController::class, 'exportPdf'])->name('transaksi.exportPdf');
 
     Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
 });

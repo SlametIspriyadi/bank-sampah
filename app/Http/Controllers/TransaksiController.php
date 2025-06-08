@@ -6,16 +6,27 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\User;
 use App\Models\Sampah;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class TransaksiController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $transaksi = DB::table('transaksi_setor')
+        $query = DB::table('transaksi_setor')
             ->leftJoin('users as nasabah', 'transaksi_setor.nasabah_id', '=', 'nasabah.id')
             ->leftJoin('sampahs', 'transaksi_setor.sampah_id', '=', 'sampahs.sampah_id')
-            ->select('transaksi_setor.*', 'nasabah.no_reg as nasabah_no_reg', 'nasabah.name as nasabah_name', 'sampahs.jenis_sampah', 'sampahs.satuan')
-            ->get();
+            ->select('transaksi_setor.*', 'nasabah.no_reg as nasabah_no_reg', 'nasabah.name as nasabah_name', 'sampahs.jenis_sampah', 'sampahs.satuan');
+
+        if ($request->filled('no_reg')) {
+            $query->where('nasabah.no_reg', 'like', '%' . $request->no_reg . '%');
+        }
+        if ($request->filled('bulan')) {
+            $query->whereMonth('transaksi_setor.tgl_setor', $request->bulan);
+        }
+        if ($request->filled('tahun')) {
+            $query->whereYear('transaksi_setor.tgl_setor', $request->tahun);
+        }
+        $transaksi = $query->get();
         return view('admin.transaksi.index', compact('transaksi'));
     }
 
@@ -69,5 +80,26 @@ class TransaksiController extends Controller
             'detil_sampah' => implode(', ', $detil_sampah_arr),
         ]);
         return redirect()->route('admin.transaksi.index')->with('success', 'Transaksi berhasil ditambahkan.');
+    }
+
+    public function exportPdf(Request $request)
+    {
+        $query = DB::table('transaksi_setor')
+            ->leftJoin('users as nasabah', 'transaksi_setor.nasabah_id', '=', 'nasabah.id')
+            ->leftJoin('sampahs', 'transaksi_setor.sampah_id', '=', 'sampahs.sampah_id')
+            ->select('transaksi_setor.*', 'nasabah.no_reg as nasabah_no_reg', 'nasabah.name as nasabah_name', 'sampahs.jenis_sampah', 'sampahs.satuan');
+
+        if ($request->filled('no_reg')) {
+            $query->where('nasabah.no_reg', 'like', '%' . $request->no_reg . '%');
+        }
+        if ($request->filled('bulan')) {
+            $query->whereMonth('transaksi_setor.tgl_setor', $request->bulan);
+        }
+        if ($request->filled('tahun')) {
+            $query->whereYear('transaksi_setor.tgl_setor', $request->tahun);
+        }
+        $transaksi = $query->get();
+        $pdf = Pdf::loadView('admin.transaksi.pdf', compact('transaksi'));
+        return $pdf->download('data_transaksi_setor.pdf');
     }
 }

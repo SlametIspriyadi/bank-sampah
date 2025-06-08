@@ -28,17 +28,19 @@
             if(notifErr) notifErr.style.display = 'none';
         }, 2500);
     </script>
-    <div class="flex justify-between items-center mb-4">
+    <div class="flex justify-between items-end mb-4">
         <h2 class="text-xl font-semibold">Data nasabah</h2>
-        <form method="GET" action="" class="flex items-center gap-2">
-            <input type="text" name="search" value="{{ $search ?? '' }}" placeholder="Cari No Reg" class="border px-3 py-2 rounded" />
-            <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded">Cari</button>
-        </form>
-        <div class="flex gap-2">
-            <a href="{{ route('admin.nasabah.create') }}" class="btn-green px-4 py-2 rounded">Tambah Data Nasabah</a>
-            <a href="{{ route('admin.nasabah.exportPdf', request('search') ? ['search' => request('search')] : []) }}" target="_blank" class="bg-red-600 text-white px-4 py-2 rounded flex items-center gap-1">
-                <i class="fa fa-file-pdf-o"></i> Export PDF
-            </a>
+        <div class="flex flex-col items-end gap-2">
+            <div class="flex gap-2">
+                <a href="{{ route('admin.nasabah.create') }}" class="btn-green px-4 py-2 rounded">Tambah Data Nasabah</a>
+                <a href="{{ route('admin.nasabah.exportPdf', request('search') ? ['search' => request('search')] : []) }}" target="_blank" class="bg-red-600 text-white px-4 py-2 rounded flex items-center gap-1">
+                    <i class="fa fa-file-pdf-o"></i> Export PDF
+                </a>
+            </div>
+            <form method="GET" action="" class="flex items-center gap-2 mt-2">
+                <input type="text" name="search" value="{{ $search ?? '' }}" placeholder="Cari No Reg" class="border px-3 py-2 rounded" />
+                <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded">Cari</button>
+            </form>
         </div>
     </div>
     <div class="overflow-x-auto">
