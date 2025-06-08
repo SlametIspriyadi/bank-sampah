@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Sampah;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class SampahController extends Controller
 {
@@ -23,7 +24,7 @@ class SampahController extends Controller
     {
         $validated = $request->validate([
             'jenis_sampah' => 'required|string|max:100',
-            'satuan' => 'required|in:Kg,Satu',
+            'satuan' => 'required|in:Kg,Pcs',
             'harga' => 'required|numeric|min:0',
         ]);
 
@@ -42,7 +43,7 @@ class SampahController extends Controller
     {
         $validated = $request->validate([
             'jenis_sampah' => 'required|string|max:100',
-            'satuan' => 'required|in:Kg,Satu',
+            'satuan' => 'required|in:Kg,Pcs',
             'harga' => 'required|numeric|min:0',
         ]);
         $sampah = Sampah::findOrFail($id);
@@ -52,8 +53,15 @@ class SampahController extends Controller
 
     public function destroy($id)
     {
-        $sampah = Sampah::findOrFail($id);
+        $sampah = Sampah::where('sampah_id', $id)->firstOrFail();
         $sampah->delete();
         return redirect()->route('admin.sampah.index')->with('success', 'Data sampah berhasil dihapus.');
+    }
+
+    public function exportPdf(Request $request)
+    {
+        $sampahs = Sampah::all();
+        $pdf = Pdf::loadView('admin.sampah.pdf', compact('sampahs'));
+        return $pdf->download('data_sampah.pdf');
     }
 }

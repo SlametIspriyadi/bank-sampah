@@ -25,6 +25,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/sampah/{id}/edit', [SampahController::class, 'edit'])->name('sampah.edit');
     Route::put('/sampah/{id}', [SampahController::class, 'update'])->name('sampah.update');
     Route::delete('/sampah/{id}', [SampahController::class, 'destroy'])->name('sampah.destroy');
+    Route::get('/sampah/export/pdf', [SampahController::class, 'exportPdf'])->name('sampah.exportPdf');
 
     // CRUD Transaksi Setor
     Route::get('/transaksi', [TransaksiController::class, 'index'])->name('transaksi.index');

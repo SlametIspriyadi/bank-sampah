@@ -5,6 +5,21 @@
 
 @section('content')
 <div class="max-w-lg mx-auto bg-white p-8 rounded shadow">
+    @if(session('success'))
+        <div id="notif-success" class="mb-4 p-3 bg-green-100 text-green-800 rounded">{{ session('success') }}</div>
+    @endif
+    @if(session('error'))
+        <div id="notif-error" class="mb-4 p-3 bg-red-100 text-red-800 rounded">{{ session('error') }}</div>
+    @endif
+    @if($errors->any())
+        <div id="notif-error" class="mb-4 p-3 bg-red-100 text-red-800 rounded">
+            <ul class="mb-0 pl-4 list-disc">
+                @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
     <form action="{{ route('admin.sampah.update', $sampah->sampah_id) }}" method="POST">
         @csrf
         @method('PUT')
@@ -17,7 +32,7 @@
             <select name="satuan" class="w-full border px-3 py-2 rounded" required>
                 <option value="">-- Pilih Satuan --</option>
                 <option value="Kg" {{ old('satuan', $sampah->satuan) == 'Kg' ? 'selected' : '' }}>Kg</option>
-                <option value="Satu" {{ old('satuan', $sampah->satuan) == 'Satu' ? 'selected' : '' }}>Satu</option>
+                <option value="Pcs" {{ old('satuan', $sampah->satuan) == 'Pcs' ? 'selected' : '' }}>Pcs</option>
             </select>
         </div>
         <div class="mb-4">
@@ -29,4 +44,12 @@
         </div>
     </form>
 </div>
+<script>
+    setTimeout(function() {
+        let notif = document.getElementById('notif-success');
+        if(notif) notif.style.display = 'none';
+        let notifErr = document.getElementById('notif-error');
+        if(notifErr) notifErr.style.display = 'none';
+    }, 2500);
+</script>
 @endsection

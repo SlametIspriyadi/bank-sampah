@@ -12,4 +12,6 @@ class Sampah extends Model
         'satuan',
         'harga',
     ];
+
+    protected $primaryKey = 'sampah_id';
 }
