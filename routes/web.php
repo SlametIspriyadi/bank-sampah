@@ -5,8 +5,10 @@ use App\Http\Controllers\Admin\NasabahController;
 use App\Http\Controllers\Admin\SampahController;
 use App\Http\Controllers\TransaksiController;
 use App\Http\Controllers\Admin\LaporanController;
+use App\Http\Controllers\User\TransaksiController as UserTransaksiController;
+use App\Http\Controllers\User\SetorController;
 
-Route::prefix('admin')->name('admin.')->group(function () {
+Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
     Route::get('/dashboard', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
 
     // CRUD Nasabah
@@ -36,21 +38,32 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
 });
 
-Route::post('/logout', function () {
-    // Auth::logout();
-    // return redirect('/');
-})->name('logout');
-    // Route::resource('/sampah', SampahController::class);
-    // Route::get('/sampah', [SampahController::class, 'index'])->name('admin.sampah.index');
-    // Route::get('/sampah/create', [SampahController::class, 'create'])->name('admin.sampah.create');
-    // Route::post('/sampah/store', [SampahController::class, 'store'])->name('admin.sampah.store');
+// Auth universal (admin & user)
+Route::get('/login', [\App\Http\Controllers\Auth\LoginController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [\App\Http\Controllers\Auth\LoginController::class, 'login'])->name('login.process');
+Route::post('/logout', [\App\Http\Controllers\Auth\LoginController::class, 'logout'])->name('logout');
 
-    // Route::resource('/transaksi', TransaksiController::class);
-    // Route::get('/transaksi', [TransaksiController::class, 'index'])->name('admin.transaksi.index');
-    // Route::get('/transaksi/create', [TransaksiController::class, 'create'])->name('admin.transaksi.create');
-    // Route::post('/transaksi/store', [TransaksiController::class, 'store'])->name('admin.transaksi.store');
-    //  // CRUD Transaksi Setor
-    // //  Route::resource('/transaksi', TransaksiController::class);
-    //  Route::get('/transaksi/index', [TransaksiController::class, 'index'])->name('admin.transaksi.index');
-    // Route::get('/transaksi/create', [TransaksiController::class, 'create'])->name('admin.transaksi.create');
-    // Route::post('/transaksi/store', [TransaksiController::class, 'store'])->name('admin.transaksi.store');
+// Route dashboard admin (khusus admin)
+Route::middleware(['auth'])->group(function() {
+    Route::get('/admin/dashboard', function() {
+        if (auth()->user()->role !== 'admin') {
+            abort(403, 'Unauthorized');
+        }
+        return app(\App\Http\Controllers\Admin\DashboardController::class)->index();
+    })->name('admin.dashboard');
+});
+
+// Route dashboard user (khusus nasabah)
+Route::middleware(['auth'])->group(function() {
+    Route::get('/user/dashboard', function() {
+        if (auth()->user()->role !== 'nasabah') {
+            abort(403, 'Unauthorized');
+        }
+        return app(\App\Http\Controllers\User\DashboardController::class)->index();
+    })->name('user.dashboard');
+    // Tambahkan route riwayat transaksi user
+    Route::get('/user/transaksi', [UserTransaksiController::class, 'index'])->name('user.transaksi.index');
+    // Tambahkan route setor sampah user
+    Route::get('/user/setor', [SetorController::class, 'index'])->name('user.setor.index');
+    // ...tambahkan route user lain jika perlu
+});
