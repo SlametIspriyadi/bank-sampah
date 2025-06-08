@@ -5,6 +5,15 @@
 
 @section('content')
 <div class="max-w-lg mx-auto bg-white p-8 rounded shadow">
+    @if($errors->any())
+        <div class="mb-4 p-3 bg-red-100 text-red-800 rounded">
+            <ul class="mb-0 pl-4 list-disc">
+                @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
     <form action="{{ route('admin.nasabah.store') }}" method="POST">
         @csrf
         <div class="mb-4">

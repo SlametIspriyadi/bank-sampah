@@ -14,6 +14,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/nasabah/create', [NasabahController::class, 'create'])->name('nasabah.create');
     Route::post('/nasabah/store', [NasabahController::class, 'store'])->name('nasabah.store');
     Route::get('/nasabah/{id}/edit', [NasabahController::class, 'edit'])->name('nasabah.edit');
+    Route::put('/nasabah/{id}', [NasabahController::class, 'update'])->name('nasabah.update');
+    Route::delete('/nasabah/{id}', [NasabahController::class, 'destroy'])->name('nasabah.destroy');
+    Route::get('/nasabah/export/pdf', [NasabahController::class, 'exportPdf'])->name('nasabah.exportPdf');
 
     // CRUD Sampah
     Route::get('/sampah', [SampahController::class, 'index'])->name('sampah.index');
@@ -27,19 +30,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/transaksi', [TransaksiController::class, 'index'])->name('transaksi.index');
     Route::get('/transaksi/create', [TransaksiController::class, 'create'])->name('transaksi.create');
     Route::post('/transaksi/store', [TransaksiController::class, 'store'])->name('transaksi.store');
-    Route::get('/transaksi/{id}/edit', [NasabahController::class, 'edit'])->name('nasabah.edit');
-
-    // Route::resource('transaksi', TransaksiController::class, [
-    //     // 'names' => [
-    //     //     'index' => 'admin.transaksi.index',
-    //     //     'create' => 'admin.transaksi.create',
-    //     //     'store' => 'admin.transaksi.store',
-    //     //     'show' => 'admin.transaksi.show',
-    //     //     'edit' => 'admin.transaksi.edit',
-    //     //     'update' => 'admin.transaksi.update',
-    //     //     'destroy' => 'admin.transaksi.destroy',
-    //     // ]
-    // ]);
 
     Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
 });

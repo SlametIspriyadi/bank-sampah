@@ -5,9 +5,41 @@
 
 @section('content')
 <div class="bg-white p-6 rounded shadow">
+    @if(session('success'))
+        <div id="notif-success" class="mb-4 p-3 bg-green-100 text-green-800 rounded">{{ session('success') }}</div>
+    @endif
+    @if(session('error'))
+        <div id="notif-error" class="mb-4 p-3 bg-red-100 text-red-800 rounded">{{ session('error') }}</div>
+    @endif
+    @if($errors->any())
+        <div id="notif-error" class="mb-4 p-3 bg-red-100 text-red-800 rounded">
+            <ul class="mb-0 pl-4 list-disc">
+                @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+    <script>
+        setTimeout(function() {
+            let notif = document.getElementById('notif-success');
+            if(notif) notif.style.display = 'none';
+            let notifErr = document.getElementById('notif-error');
+            if(notifErr) notifErr.style.display = 'none';
+        }, 2500);
+    </script>
     <div class="flex justify-between items-center mb-4">
         <h2 class="text-xl font-semibold">Data nasabah</h2>
-        <a href="{{ route('admin.nasabah.create') }}" class="btn-green px-4 py-2 rounded">Tambah</a>
+        <form method="GET" action="" class="flex items-center gap-2">
+            <input type="text" name="search" value="{{ $search ?? '' }}" placeholder="Cari No Reg" class="border px-3 py-2 rounded" />
+            <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded">Cari</button>
+        </form>
+        <div class="flex gap-2">
+            <a href="{{ route('admin.nasabah.create') }}" class="btn-green px-4 py-2 rounded">Tambah Data Nasabah</a>
+            <a href="{{ route('admin.nasabah.exportPdf', request('search') ? ['search' => request('search')] : []) }}" target="_blank" class="bg-red-600 text-white px-4 py-2 rounded flex items-center gap-1">
+                <i class="fa fa-file-pdf-o"></i> Export PDF
+            </a>
+        </div>
     </div>
     <div class="overflow-x-auto">
     <table class="min-w-full">
@@ -37,8 +69,12 @@
                 <td class="border px-4 py-2">Rp {{ number_format($n->saldo ?? 0, 0, ',', '.') }}</td>
                 <td class="border px-4 py-2">
                     <a href="#" class="inline-block mr-2"><i class="fa fa-eye"></i></a>
-                    <a href="#" class="inline-block mr-2"><i class="fa fa-edit"></i></a>
-                    <a href="#" class="inline-block"><i class="fa fa-trash"></i></a>
+                    <a href="{{ route('admin.nasabah.edit', $n->id) }}" class="inline-block mr-2"><i class="fa fa-edit">edit</i></a>
+                    <form action="{{ route('admin.nasabah.destroy', $n->id) }}" method="POST" style="display:inline-block" onsubmit="return confirm('Yakin hapus data {{ $n->no_reg }} - {{ $n->name }}?')">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="inline-block"><i class="fa fa-trash">hapus</i></button>
+                    </form>
                 </td>
             </tr>
             @endforeach
