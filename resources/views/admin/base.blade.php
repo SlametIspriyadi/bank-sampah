@@ -20,18 +20,6 @@
             </section>
         </main>
     </div>
-    <nav class="bg-green-700 text-white p-4">
-        <div class="container mx-auto flex justify-between items-center">
-            <span>Bank Sampah</span>
-            <div class="flex items-center gap-4">
-                <span>{{ auth()->user()->name ?? '' }}</span>
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <button type="submit" class="bg-red-500 hover:bg-red-700 text-white px-3 py-1 rounded">Logout</button>
-                </form>
-            </div>
-        </div>
-    </nav>
 </body>
 </html>
 
