@@ -3,7 +3,6 @@
 @section('content')
 <div class="bg-white p-6 rounded shadow">
     <h2 class="text-xl font-semibold mb-4">Setor Sampah</h2>
-    <p>Halaman ini untuk fitur setor sampah oleh user. (Silakan tambahkan form setor atau riwayat setor sesuai kebutuhan.)</p>
     <table class="min-w-full mt-4">
         <thead>
             <tr>

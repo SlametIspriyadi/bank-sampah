@@ -8,8 +8,9 @@
     <div class="flex justify-between items-center mb-4">
         <h2 class="text-xl font-semibold">Data Sampah</h2>
         <div class="flex gap-2">
-            <a href="{{ route('admin.sampah.create') }}" class="btn-green px-4 py-2 rounded">Tambah Data Sampah</a>
-            <a href="{{ route('admin.sampah.exportPdf') }}" target="_blank" class="bg-red-600 text-white px-4 py-2 rounded flex items-center gap-1">
+            <!-- Tombol Tambah Data Sampah dengan warna hover sidebar -->
+            <a href="{{ route('admin.sampah.create') }}" class="px-4 py-2 rounded bg-green-600 text-white hover:bg-green-700">Tambah Data Sampah</a>
+            <a href="{{ route('admin.sampah.exportPdf') }}" target="_blank" class="bg-red-600 text-white px-4 py-2 rounded flex items-center gap-1 hover:bg-red-700">
                 <i class="fa fa-file-pdf-o"></i> Export PDF
             </a>
         </div>
@@ -31,7 +32,8 @@
     <div class="overflow-x-auto">
     <table class="min-w-full">
         <thead>
-            <tr class="table-header-custom">
+            <!-- Header tabel dengan warna hover sidebar -->
+            <tr class="bg-green-600 text-white">
                 <th class="px-4 py-2">No</th>
                 <th class="px-4 py-2">Jenis Sampah</th>
                 <th class="px-4 py-2">Satuan</th>

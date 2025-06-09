@@ -8,7 +8,15 @@ use App\Http\Controllers\Admin\LaporanController;
 use App\Http\Controllers\User\TransaksiController as UserTransaksiController;
 use App\Http\Controllers\User\SetorController;
 
-Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
+// Rute default: Mengarahkan dari URL root '/' ke halaman login
+// Ini akan memastikan saat aplikasi diakses, langsung menuju ke form login.
+Route::get('/', function () {
+    return redirect()->route('login');
+});
+
+// Grup Rute Admin
+// Semua rute di dalam grup ini akan dilindungi oleh middleware 'auth' dan 'no.cache'
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'no.cache'])->group(function () {
     Route::get('/dashboard', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
 
     // CRUD Nasabah
@@ -39,12 +47,15 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
 });
 
 // Auth universal (admin & user)
-Route::get('/login', [\App\Http\Controllers\Auth\LoginController::class, 'showLoginForm'])->name('login');
+// Tambahkan middleware 'no.cache' ke rute login GET
+Route::get('/login', [\App\Http\Controllers\Auth\LoginController::class, 'showLoginForm'])->name('login')->middleware('no.cache');
 Route::post('/login', [\App\Http\Controllers\Auth\LoginController::class, 'login'])->name('login.process');
 Route::post('/logout', [\App\Http\Controllers\Auth\LoginController::class, 'logout'])->name('logout');
 
+
 // Route dashboard admin (khusus admin)
-Route::middleware(['auth'])->group(function() {
+// Tambahkan middleware 'no.cache' di sini juga jika rute ini adalah rute utama dashboard admin
+Route::middleware(['auth', 'no.cache'])->group(function() {
     Route::get('/admin/dashboard', function() {
         if (auth()->user()->role !== 'admin') {
             abort(403, 'Unauthorized');
@@ -53,8 +64,10 @@ Route::middleware(['auth'])->group(function() {
     })->name('admin.dashboard');
 });
 
+
 // Route dashboard user (khusus nasabah)
-Route::middleware(['auth'])->group(function() {
+// Tambahkan middleware 'no.cache' di sini juga
+Route::middleware(['auth', 'no.cache'])->group(function() {
     Route::get('/user/dashboard', function() {
         if (auth()->user()->role !== 'nasabah') {
             abort(403, 'Unauthorized');
