@@ -25,6 +25,8 @@ body {
 .table-header-custom {
     background: #22b14c !important;
     color: #fff !important;
+    font-weight: bold;
+    letter-spacing: 0.5px;
 }
 .btn-green {
     background: #22b14c !important;

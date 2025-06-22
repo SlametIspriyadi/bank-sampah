@@ -4,7 +4,7 @@
 @section('header', 'Dashboard')
 
 @section('content')
-<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
     <div class="bg-white p-6 rounded shadow">
         <div class="text-gray-500">Total Nasabah</div>
         <div class="text-2xl font-bold">{{ $nasabahCount ?? '-' }}</div>
@@ -12,6 +12,10 @@
     <div class="bg-white p-6 rounded shadow">
         <div class="text-gray-500">Total Transaksi</div>
         <div class="text-2xl font-bold">{{ $transaksiCount ?? '-' }}</div>
+    </div>
+    <div class="bg-white p-6 rounded shadow">
+        <div class="text-gray-500">Total Pendapatan Nasabah</div>
+        <div class="text-2xl font-bold">Rp {{ number_format($totalPendapatan ?? 0, 0, ',', '.') }}</div>
     </div>
 </div>
 <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">

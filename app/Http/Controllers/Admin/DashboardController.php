@@ -15,6 +15,9 @@ class DashboardController extends Controller
         $nasabahCount = User::where('role', 'nasabah')->count();
         $transaksiCount = \App\Models\Transaksi::count();
 
+        // Hitung total pendapatan seluruh nasabah dikurangi total penarikan
+        $totalPendapatan = \App\Models\Transaksi::sum('total_pendapatan') - \App\Models\TransaksiTarik::sum('jumlah_tarik');
+
         // Data grafik bulanan (tahun ini)
         $year = date('Y');
         $bulanLabels = [
@@ -41,6 +44,7 @@ class DashboardController extends Controller
         return view('admin.dashboard', compact(
             'nasabahCount',
             'transaksiCount',
+            'totalPendapatan',
             'bulanLabels',
             'bulanData',
             'tahunLabels',

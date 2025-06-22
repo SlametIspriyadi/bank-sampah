@@ -43,6 +43,12 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'no.cache'])->group(
     Route::post('/transaksi/store', [TransaksiController::class, 'store'])->name('transaksi.store');
     Route::get('/transaksi/export/pdf', [TransaksiController::class, 'exportPdf'])->name('transaksi.exportPdf');
 
+    // CRUD Transaksi Tarik
+    Route::get('/transaksi-tarik', [\App\Http\Controllers\Admin\TransaksiTarikController::class, 'index'])->name('transaksi_tarik.index');
+    Route::get('/transaksi-tarik/create', [\App\Http\Controllers\Admin\TransaksiTarikController::class, 'create'])->name('transaksi_tarik.create');
+    Route::post('/transaksi-tarik/store', [\App\Http\Controllers\Admin\TransaksiTarikController::class, 'store'])->name('transaksi_tarik.store');
+    Route::get('/transaksi-tarik/export/pdf', [\App\Http\Controllers\Admin\TransaksiTarikController::class, 'exportPdf'])->name('transaksi_tarik.exportPdf');
+
     Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
 });
 

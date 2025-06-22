@@ -54,4 +54,13 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function transaksiSetor()
+    {
+        return $this->hasMany(\App\Models\Transaksi::class, 'nasabah_id');
+    }
+    public function transaksiTarik()
+    {
+        return $this->hasMany(\App\Models\TransaksiTarik::class, 'nasabah_id');
+    }
 }

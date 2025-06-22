@@ -46,7 +46,9 @@
                 <select name="bulan" class="border px-3 py-2 rounded">
                     <option value="">Bulan</option>
                     @for($m=1; $m<=12; $m++)
-                        <option value="{{ $m }}" {{ DateTime::createFromFormat('!m', $m)->format('F') }}</option>
+                        <option value="{{ $m }}" {{ request('bulan') == $m ? 'selected' : '' }}>
+                            {{ DateTime::createFromFormat('!m', $m)->format('F') }}
+                        </option>
                     @endfor
                 </select>
                 <select name="tahun" class="border px-3 py-2 rounded">

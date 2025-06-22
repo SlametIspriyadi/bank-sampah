@@ -19,10 +19,13 @@ class NasabahController extends Controller
             $query->where('no_reg', 'like', '%' . $search . '%');
         }
         $nasabahs = $query->get()->map(function($n) {
-            $total = \DB::table('transaksi_setor')
+            $totalSetor = \DB::table('transaksi_setor')
                 ->where('nasabah_id', $n->id)
                 ->sum('total_pendapatan');
-            $n->saldo = $total * 0.98; // saldo = total transaksi setor dipotong 2%
+            $totalTarik = \DB::table('transaksi_tarik')
+                ->where('nasabah_id', $n->id)
+                ->sum('jumlah_tarik');
+            $n->saldo = ($totalSetor * 0.98) - $totalTarik; // saldo = total transaksi setor dipotong 2% - total penarikan
             return $n;
         });
         return view('admin.nasabah.index', compact('nasabahs', 'search'));
@@ -105,10 +108,13 @@ class NasabahController extends Controller
             $query->where('no_reg', 'like', '%' . $search . '%');
         }
         $nasabahs = $query->get()->map(function($n) {
-            $total = \DB::table('transaksi_setor')
+            $totalSetor = \DB::table('transaksi_setor')
                 ->where('nasabah_id', $n->id)
                 ->sum('total_pendapatan');
-            $n->saldo = $total * 0.98;
+            $totalTarik = \DB::table('transaksi_tarik')
+                ->where('nasabah_id', $n->id)
+                ->sum('jumlah_tarik');
+            $n->saldo = ($totalSetor * 0.98) - $totalTarik;
             return $n;
         });
         $pdf = Pdf::loadView('admin.nasabah.pdf', compact('nasabahs', 'search'));
