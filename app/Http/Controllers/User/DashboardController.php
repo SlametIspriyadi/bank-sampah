@@ -11,15 +11,15 @@ class DashboardController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $saldo = DB::table('transaksi_setor')
+        // Saldo = total setor - total tarik
+        $totalSetor = DB::table('transaksi_setor')
             ->where('nasabah_id', $user->id)
-            ->sum('total_pendapatan') * 0.98;
-
-        $transaksi = DB::table('transaksi_setor')
+            ->sum('total_pendapatan');
+        $totalTarik = DB::table('transaksi_tarik')
             ->where('nasabah_id', $user->id)
-            ->orderByDesc('tgl_setor')
-            ->get();
+            ->sum('jumlah_tarik');
+        $saldo = $totalSetor * 0.98 - $totalTarik;
 
-        return view('user.dashboard', compact('saldo', 'transaksi'));
+        return view('user.dashboard', compact('user', 'saldo', 'totalSetor', 'totalTarik'));
     }
 }

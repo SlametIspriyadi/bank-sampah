@@ -2,74 +2,120 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Bank Sampah Tanjung Lestari</title>
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     <style>
-        body { background: #fff !important; }
-        .centered-card {
+        body {
+            background: #fff !important; /* Force background to white, ensuring it overrides other styles */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .container-center {
             min-height: 100vh;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
+            padding: 1rem;
+        }
+        .welcome-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #1a8c3a;
+            margin-bottom: 2rem;
+            text-align: center;
+            line-height: 1.2;
         }
         .login-card {
             background: #fff;
             padding: 2.5rem 2rem;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
             width: 100%;
-            max-width: 350px;
+            max-width: 400px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
-        .login-title {
-            font-size: 2rem;
+        .login-form-title {
+            font-size: 1.8rem;
             font-weight: bold;
             margin-bottom: 1.5rem;
             text-align: center;
+            color: #333;
         }
-        .subtitle {
-            text-align: center;
-            font-size: 1.1rem;
-            color: #16a34a;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            letter-spacing: 1px;
-        }
-        .input {
+        .input-field {
             width: 100%;
-            border: 1px solid #d1d5db;
-            border-radius: 5px;
-            padding: 0.6rem 0.8rem;
-            margin-bottom: 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            margin-bottom: 1.25rem;
+            font-size: 1rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            max-width: 300px;
         }
-        .btn-green {
+        .input-field:focus {
+            outline: none;
+            border-color: #1a8c3a;
+            box-shadow: 0 0 0 3px rgba(26, 140, 58, 0.2);
+        }
+        .btn-custom-green {
             width: 100%;
-            background: #22c55e;
+            background: #1a8c3a;
             color: #fff;
             font-weight: 600;
             border: none;
-            border-radius: 5px;
-            padding: 0.6rem 0;
+            border-radius: 8px;
+            padding: 0.75rem 0;
             margin-top: 0.5rem;
-            transition: background 0.2s;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background 0.2s ease-in-out;
+            max-width: 300px;
         }
-        .btn-green:hover {
-            background: #16a34a;
+        .btn-custom-green:hover {
+            background: #146b2e;
+        }
+        .error-message {
+            background-color: #fee2e2;
+            color: #dc2626;
+            padding: 0.75rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-weight: 500;
+            border: 1px solid #fca5a5;
+            width: 100%;
+            max-width: 300px;
+            box-sizing: border-box;
+        }
+        .login-form {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
     </style>
 </head>
 <body>
-    <div class="centered-card">
+    <div class="container-center">
+        <h1 class="welcome-title">Bank Sampah Tanjung Lestari</h1>
+
         <div class="login-card">
-            <div class="subtitle">Bank Sampah Tanjung Lestari</div>
-            <div class="login-title">Login</div>
+            <div class="login-form-title">Login</div>
+
             @if(session('error'))
-                <div class="mb-4 p-3 bg-red-100 text-red-800 rounded">{{ session('error') }}</div>
+                <div class="error-message">
+                    {{ session('error') }}
+                </div>
             @endif
-            <form method="POST" action="{{ route('login.process') }}">
+
+            <form method="POST" action="{{ route('login.process') }}" class="login-form">
                 @csrf
-                <input type="text" name="username" class="input" placeholder="No Registrasi" required autofocus>
-                <input type="password" name="password" class="input" placeholder="Password" required>
-                <button type="submit" class="btn-green">Login</button>
+                <input type="text" name="username" class="input-field" placeholder="No Registrasi" required autofocus>
+                <input type="password" name="password" class="input-field" placeholder="Password" required>
+                <button type="submit" class="btn-custom-green">Login</button>
             </form>
         </div>
     </div>

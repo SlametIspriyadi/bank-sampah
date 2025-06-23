@@ -6,7 +6,7 @@ use App\Http\Controllers\Admin\SampahController;
 use App\Http\Controllers\TransaksiController;
 use App\Http\Controllers\Admin\LaporanController;
 use App\Http\Controllers\User\TransaksiController as UserTransaksiController;
-use App\Http\Controllers\User\SetorController;
+use App\Http\Controllers\User\TarikController;
 
 // Rute default: Mengarahkan dari URL root '/' ke halaman login
 // Ini akan memastikan saat aplikasi diakses, langsung menuju ke form login.
@@ -83,6 +83,6 @@ Route::middleware(['auth', 'no.cache'])->group(function() {
     // Tambahkan route riwayat transaksi user
     Route::get('/user/transaksi', [UserTransaksiController::class, 'index'])->name('user.transaksi.index');
     // Tambahkan route setor sampah user
-    Route::get('/user/setor', [SetorController::class, 'index'])->name('user.setor.index');
+    Route::get('/user/setor', [TarikController::class, 'index'])->name('user.setor.index');
     // ...tambahkan route user lain jika perlu
 });
