@@ -17,34 +17,64 @@
             </ul>
         </div>
     @endif
+    @if(isset($notifikasi) && $notifikasi)
+        <div class="mb-4 p-3 bg-yellow-100 text-yellow-800 rounded">{{ $notifikasi }}</div>
+    @endif
+    @if(session('nota_pdf'))
+        <script>
+            window.onload = function() {
+                var url = @json(session('nota_pdf'));
+                var a = document.createElement('a');
+                a.href = url;
+                a.download = '';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            };
+        </script>
+    @endif
     <div class="flex justify-between items-end mb-4">
-        <h2 class="text-xl font-semibold">Daftar Transaksi Tarik</h2>
+        <h2 class="text-xl font-semibold">Transaksi Tarik Saldo</h2>
         <div class="flex flex-col items-end gap-2">
-            <div class="flex gap-2">
+            <form method="GET" action="" class="flex items-center gap-2 mb-2">
+                <input type="text" name="no_reg" value="{{ request('no_reg') }}" placeholder="Cari No Reg" class="border px-3 py-2 rounded" />
+                <button type="submit" class="px-4 py-2 rounded bg-green-600 text-white hover:bg-green-700">Cari</button>
+            </form>
+            <!-- <div class="flex gap-2">
                 <a href="{{ route('admin.transaksi_tarik.create') }}" class="px-4 py-2 rounded bg-green-600 text-white hover:bg-green-700">Tambah Transaksi Tarik</a>
-                <a href="{{ route('admin.transaksi_tarik.exportPdf', array_filter(request()->only(['no_reg','bulan','tahun']))) }}" target="_blank" class="bg-red-600 text-white px-4 py-2 rounded flex items-center gap-1 hover:bg-red-700">
+                <a href="{{ route('admin.transaksi_tarik.exportPdf', array_filter(request()->only(['no_reg']))) }}" target="_blank" class="bg-red-600 text-white px-4 py-2 rounded flex items-center gap-1 hover:bg-red-700">
                     <i class="fa fa-file-pdf-o"></i> Export PDF
                 </a>
-            </div>
-            <form method="GET" action="" class="flex items-center gap-2">
-                <input type="text" name="no_reg" value="{{ request('no_reg') }}" placeholder="Cari No Reg" class="border px-3 py-2 rounded" />
-                <select name="bulan" class="border px-3 py-2 rounded">
-                    <option value="">Bulan</option>
-                    @for($m=1; $m<=12; $m++)
-                        <option value="{{ $m }}" {{ request('bulan') == $m ? 'selected' : '' }}>{{ DateTime::createFromFormat('!m', $m)->format('F') }}</option>
-                    @endfor
-                </select>
-                <select name="tahun" class="border px-3 py-2 rounded">
-                    <option value="">Tahun</option>
-                    @for($y = date('Y'); $y >= 2020; $y--)
-                        <option value="{{ $y }}" {{ request('tahun') == $y ? 'selected' : '' }}>{{ $y }}</option>
-                    @endfor
-                </select>
-                <button type="submit" class="px-4 py-2 rounded bg-green-600 text-white hover:bg-green-700">Filter</button>
-            </form>
+            </div> -->
         </div>
     </div>
     <div class="overflow-x-auto">
+        @if(request('no_reg') && isset($nasabah) && $saldoAkhir > 0)
+            <table class="min-w-full mb-6">
+                <thead>
+                    <tr class="bg-green-600 text-white">
+                        <th class="px-4 py-2">No Reg</th>
+                        <th class="px-4 py-2">Nama</th>
+                        <th class="px-4 py-2">Saldo</th>
+                        <th class="px-4 py-2">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="border px-4 py-2">{{ $nasabah->no_reg }}</td>
+                        <td class="border px-4 py-2">{{ $nasabah->name }}</td>
+                        <td class="border px-4 py-2">Rp {{ number_format($saldoAkhir, 0, ',', '.') }}</td>
+                        <td class="border px-4 py-2">
+                            <a href="{{ route('admin.transaksi_tarik.create', ['nasabah_id' => $nasabah->id]) }}" class="px-4 py-2 rounded bg-green-600 text-white hover:bg-green-700">Tarik Saldo</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        @elseif(request('no_reg') && isset($nasabah) && $saldoAkhir <= 0)
+            <div class="mb-4 p-3 bg-yellow-100 text-yellow-800 rounded">Saldo kosong, tidak bisa melakukan penarikan.</div>
+        @endif
+        <!-- @if(!request('no_reg') || !isset($nasabah))
+        {{--
         <table class="min-w-full">
             <thead>
                 <tr class="bg-green-600 text-white">
@@ -71,6 +101,8 @@
                 @endforelse
             </tbody>
         </table>
+        --}}
+        @endif -->
     </div>
 </div>
 @endsection
