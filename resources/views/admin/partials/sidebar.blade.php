@@ -9,7 +9,8 @@
             <li class="mb-2"><a href="{{ route('admin.sampah.index') }}" class="block px-6 py-2 rounded {{ request()->routeIs('admin.sampah.*') ? 'bg-green-600' : 'hover:bg-green-600' }}">Data Sampah</a></li>
             <li class="mb-2"><a href="{{ route('admin.transaksi.index') }}" class="block px-6 py-2 rounded {{ request()->routeIs('admin.transaksi.*') ? 'bg-green-600' : 'hover:bg-green-600' }}">Setor Sampah</a></li>
             <li class="mb-2"><a href="{{ route('admin.transaksi_tarik.index') }}" class="block px-6 py-2 rounded {{ request()->routeIs('admin.transaksi_tarik.*') ? 'bg-green-600' : 'hover:bg-green-600' }}">Tarik Saldo</a></li>
-            <li class="mb-2"><a href="{{ route('admin.laporan.index') }}" class="block px-6 py-2 rounded {{ request()->routeIs('admin.laporan.*') ? 'bg-green-600' : 'hover:bg-green-600' }}">Laporan</a></li>
+            <li class="mb-2"><a href="{{ route('admin.laporan.laporan_setor') }}" class="block px-6 py-2 rounded {{ request()->routeIs('admin.laporan.laporan_setor') ? 'bg-green-600' : 'hover:bg-green-600' }}">Laporan Setor</a></li>
+            <li class="mb-2"><a href="{{ route('admin.laporan.laporan_tarik') }}" class="block px-6 py-2 rounded {{ request()->routeIs('admin.laporan.laporan_tarik') ? 'bg-green-600' : 'hover:bg-green-600' }}">Laporan Tarik</a></li>
         </ul>
     </nav>
     <!-- Menambahkan div tambahan untuk memastikan tombol logout menempel di bawah -->

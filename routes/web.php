@@ -52,6 +52,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'no.cache'])->group(
     Route::get('/transaksi-tarik/nota/{filename}', [\App\Http\Controllers\Admin\TransaksiTarikController::class, 'downloadNota'])->name('transaksi_tarik.downloadNota');
 
     Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
+    Route::get('/laporan/setor', [LaporanController::class, 'laporanSetor'])->name('laporan.laporan_setor');
+    Route::get('/laporan/setor/pdf', [LaporanController::class, 'laporanSetorPdf'])->name('laporan.laporan_setor.pdf');
+    Route::get('/laporan/tarik', [LaporanController::class, 'laporanTarik'])->name('laporan.laporan_tarik');
+    Route::get('/laporan/tarik/pdf', [LaporanController::class, 'laporanTarikPdf'])->name('laporan.laporan_tarik.pdf');
 });
 
 // Auth universal (admin & user)
