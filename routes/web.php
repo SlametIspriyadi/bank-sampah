@@ -7,6 +7,7 @@ use App\Http\Controllers\TransaksiController;
 use App\Http\Controllers\Admin\LaporanController;
 use App\Http\Controllers\User\TransaksiController as UserTransaksiController;
 use App\Http\Controllers\User\TarikController;
+use App\Http\Controllers\Admin\TransaksiController as AdminTransaksiController;
 
 // Rute default: Mengarahkan dari URL root '/' ke halaman login
 // Ini akan memastikan saat aplikasi diakses, langsung menuju ke form login.
@@ -56,6 +57,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'no.cache'])->group(
     Route::get('/laporan/setor/pdf', [LaporanController::class, 'laporanSetorPdf'])->name('laporan.laporan_setor.pdf');
     Route::get('/laporan/tarik', [LaporanController::class, 'laporanTarik'])->name('laporan.laporan_tarik');
     Route::get('/laporan/tarik/pdf', [LaporanController::class, 'laporanTarikPdf'])->name('laporan.laporan_tarik.pdf');
+
+    // Route download nota setor PDF (harus di dalam grup admin, bukan di grup user)
+    Route::get('/transaksi/nota/{filename}', [TransaksiController::class, 'downloadNota'])->name('transaksi.downloadNota');
 });
 
 // Auth universal (admin & user)

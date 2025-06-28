@@ -13,12 +13,8 @@
         </div>
         <div class="mb-4">
             <label class="block mb-1 font-semibold">Nasabah</label>
-            <select name="nasabah_id" class="w-full border px-3 py-2 rounded" required>
-                <option value="">-- Pilih Nasabah --</option>
-                @foreach($nasabah as $n)
-                    <option value="{{ $n->id }}">{{ $n->no_reg }} - {{ $n->name }}</option>
-                @endforeach
-            </select>
+            <input type="hidden" name="nasabah_id" value="{{ $nasabah->id }}">
+            <input type="text" class="w-full border px-3 py-2 rounded bg-gray-100" value="{{ $nasabah->no_reg }} - {{ $nasabah->name }}" readonly>
         </div>
         <div id="sampah-group-list">
             <div class="sampah-group mb-4 border-b pb-4">
@@ -42,6 +38,19 @@
             <button type="submit" class="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700">Simpan</button>
         </div>
     </form>
+    @if(session('nota_setor'))
+        <script>
+            window.onload = function() {
+                var url = @json(session('nota_setor'));
+                var a = document.createElement('a');
+                a.href = url;
+                a.download = '';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            };
+        </script>
+    @endif
 </div>
 <script>
     const sampahData = @json($sampah);
