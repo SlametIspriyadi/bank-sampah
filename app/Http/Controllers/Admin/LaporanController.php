@@ -28,7 +28,7 @@ class LaporanController extends Controller
         if ($request->filled('tahun')) {
             $query->whereYear('tgl_setor', $request->tahun);
         }
-        $setor = $query->orderByDesc('tgl_setor')->get();
+        $setor = $query->orderByDesc('tgl_setor')->paginate(10);
         return view('admin.laporan.laporan_setor', compact('setor'));
     }
 
@@ -65,7 +65,7 @@ class LaporanController extends Controller
         if ($request->filled('tahun')) {
             $query->whereYear('tgl_tarik', $request->tahun);
         }
-        $tarik = $query->orderByDesc('tgl_tarik')->get();
+        $tarik = $query->orderByDesc('tgl_tarik')->paginate(10);
         return view('admin.laporan.laporan_tarik', compact('tarik'));
     }
 

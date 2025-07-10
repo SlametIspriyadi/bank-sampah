@@ -4,8 +4,7 @@
 @section('header', 'Laporan Transaksi Tarik')
 
 @section('content')
-<div class="bg-white p-6 rounded shadow">
-    <div class="flex justify-between items-end mb-4">
+<div class="flex justify-between items-end mb-4">
         <h2 class="text-xl font-semibold">Laporan Transaksi Tarik</h2>
         <div class="flex flex-col items-end gap-2">
             <div class="flex gap-2">
@@ -62,6 +61,8 @@
                 @endforelse
             </tbody>
         </table>
-    </div>
+        <div class="mt-4">
+            {{ $tarik->appends(request()->query())->links() }}
+        </div>
 </div>
 @endsection

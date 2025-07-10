@@ -4,8 +4,7 @@
 @section('header', 'Data Sampah')
 
 @section('content')
-<div class="bg-white p-6 rounded shadow">
-    <div class="flex justify-between items-center mb-4">
+<div class="flex justify-between items-center mb-4">
         <h2 class="text-xl font-semibold">Data Sampah</h2>
         <div class="flex gap-2">
             <!-- Tombol Tambah Data Sampah dengan warna hover sidebar -->
@@ -60,6 +59,9 @@
             @endforeach
         </tbody>
     </table>
+    <div class="mt-4">
+        {{ $sampahs->appends(request()->query())->links() }}
     </div>
-</div>
+    </div>
+
 @endsection

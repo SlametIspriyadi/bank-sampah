@@ -12,7 +12,7 @@ class SampahController extends Controller
 
     public function index()
     {
-        $sampahs = Sampah::all();
+        $sampahs = Sampah::paginate(10);
         return view('admin.sampah.index', compact('sampahs'));
     }
     public function create()
@@ -23,9 +23,11 @@ class SampahController extends Controller
      public function store(Request $request)
     {
         $validated = $request->validate([
-            'jenis_sampah' => 'required|string|max:100',
+            'jenis_sampah' => 'required|string|max:100|unique:sampahs,jenis_sampah',
             'satuan' => 'required|in:Kg,Pcs',
             'harga' => 'required|numeric|min:0',
+        ], [
+            'jenis_sampah.unique' => 'Jenis sampah sudah terdaftar.',
         ]);
 
         Sampah::create($validated);

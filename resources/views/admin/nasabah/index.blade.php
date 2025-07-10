@@ -4,7 +4,7 @@
 @section('header', 'Data nasabah')
 
 @section('content')
-<div class="bg-white p-6 rounded shadow">
+<div >
     @if(session('success'))
         <div id="notif-success" class="mb-4 p-3 bg-green-100 text-green-800 rounded">{{ session('success') }}</div>
     @endif
@@ -85,6 +85,9 @@
             @endforeach
         </tbody>
     </table>
-</div>
+    <div class="mt-4">
+        {{ $nasabahs->appends(request()->query())->links() }}
+    </div>
+    </div>
 </div>
 @endsection

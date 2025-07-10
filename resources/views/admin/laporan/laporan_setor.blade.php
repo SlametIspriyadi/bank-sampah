@@ -4,8 +4,7 @@
 @section('header', 'Laporan Transaksi Setor')
 
 @section('content')
-<div class="bg-white p-6 rounded shadow">
-    <div class="flex justify-between items-end mb-4">
+<div class="flex justify-between items-end mb-5  top-5 z-10 bg-white" style="background:inherit;" >
         <h2 class="text-xl font-semibold">Laporan Transaksi Setor</h2>
         <div class="flex flex-col items-end gap-2">
             <div class="flex gap-2">
@@ -79,6 +78,9 @@
                 @endforelse
             </tbody>
         </table>
-    </div>
+        <div class="mt-4">
+            {{ $setor->appends(request()->query())->links() }}
+        </div>
 </div>
+
 @endsection
