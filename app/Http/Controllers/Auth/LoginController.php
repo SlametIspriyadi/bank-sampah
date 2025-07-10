@@ -21,37 +21,38 @@ class LoginController extends Controller
         // Alternatif: $this->middleware('guest')->except('logout');
     }
 
-    public function showLoginForm()
+    public function showLoginForm(Request $request)
     {
         // Jika pengguna sudah terautentikasi
         if (Auth::check()) {
-            $user = Auth::user(); // Dapatkan data user yang sedang login
-
-            // Periksa peran/role pengguna dan arahkan ke dashboard yang sesuai
+            $user = Auth::user();
             if ($user->role === 'admin') {
                 return redirect()->route('admin.dashboard');
-            } else { // Asumsikan selain admin adalah nasabah/user biasa
+            } else {
                 return redirect()->route('user.dashboard');
             }
         }
-
-        // Jika pengguna belum terautentikasi, tampilkan form login
-        return view('auth.login');
+        // Ambil role dari query string jika ada
+        $role = $request->query('role');
+        return view('auth.login', compact('role'));
     }
 
     public function login(Request $request)
     {
         $request->validate([
-            'username' => 'required', // tetap gunakan name input 'username' di form
+            'username' => 'required',
             'password' => 'required',
         ]);
 
-        // Login hanya menggunakan no_reg
-        $user = User::where('no_reg', $request->username)->first(); // Gunakan model User yang sudah diimpor
+        $role = $request->input('role', $request->query('role'));
+        $user = User::where('no_reg', $request->username)->first();
 
         if ($user && \Hash::check($request->password, $user->password)) {
+            // Validasi role jika ada
+            if ($role && $user->role !== $role) {
+                return back()->with('error', 'Anda tidak memiliki akses ke halaman login ini.');
+            }
             Auth::login($user);
-            // Redirect sesuai role
             if ($user->role === 'admin') {
                 return redirect()->route('admin.dashboard');
             } else {
@@ -66,6 +67,6 @@ class LoginController extends Controller
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        return redirect()->route('login');
+        return redirect('/'); // Arahkan ke halaman welcome setelah logout
     }
 }

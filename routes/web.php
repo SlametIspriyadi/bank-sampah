@@ -9,10 +9,18 @@ use App\Http\Controllers\User\TransaksiController as UserTransaksiController;
 use App\Http\Controllers\User\TarikController;
 use App\Http\Controllers\Admin\TransaksiController as AdminTransaksiController;
 
-// Rute default: Mengarahkan dari URL root '/' ke halaman login
-// Ini akan memastikan saat aplikasi diakses, langsung menuju ke form login.
+// Rute default: Tampilkan halaman welcome sebelum login
+// Jika sudah login, arahkan ke dashboard sesuai role
 Route::get('/', function () {
-    return redirect()->route('login');
+    // Jika sudah login, arahkan ke dashboard sesuai role
+    if (auth()->check()) {
+        if (auth()->user()->role === 'admin') {
+            return redirect()->route('admin.dashboard');
+        } else {
+            return redirect()->route('user.dashboard');
+        }
+    }
+    return view('welcome');
 });
 
 // Grup Rute Admin

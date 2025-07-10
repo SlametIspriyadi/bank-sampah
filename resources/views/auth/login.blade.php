@@ -100,7 +100,6 @@
 </head>
 <body>
     <div class="container-center">
-        <h1 class="welcome-title">Bank Sampah Tanjung Lestari</h1>
 
         <div class="login-card">
             <div class="login-form-title">Login</div>
@@ -113,6 +112,9 @@
 
             <form method="POST" action="{{ route('login.process') }}" class="login-form">
                 @csrf
+                @if(isset($role))
+                    <input type="hidden" name="role" value="{{ $role }}">
+                @endif
                 <input type="text" name="username" class="input-field" placeholder="No Registrasi" required autofocus>
                 <input type="password" name="password" class="input-field" placeholder="Password" required>
                 <button type="submit" class="btn-custom-green">Login</button>
