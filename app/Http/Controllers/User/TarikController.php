@@ -8,12 +8,26 @@ use App\Models\TransaksiTarik;
 
 class TarikController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        // Ambil data berdasarkan nasabah_id, bukan user_id
-        $transaksi = TransaksiTarik::where('nasabah_id', auth()->id())->orderByDesc('tgl_tarik')->get();
+        $query = TransaksiTarik::where('nasabah_id', auth()->id());
+        // Filter bulan dan tahun
+        if ($request->filled('bulan')) {
+            $query->whereMonth('tgl_tarik', $request->bulan);
+        }
+        if ($request->filled('tahun')) {
+            $query->whereYear('tgl_tarik', $request->tahun);
+        }
+        $transaksi = $query->orderByDesc('tgl_tarik')->paginate(10);
+        // Untuk dropdown tahun
+        $tahunList = TransaksiTarik::where('nasabah_id', auth()->id())
+            ->selectRaw('YEAR(tgl_tarik) as tahun')
+            ->groupBy('tahun')
+            ->orderByDesc('tahun')
+            ->pluck('tahun');
         return view('user.setor.index', [
-            'transaksi' => $transaksi
+            'transaksi' => $transaksi,
+            'tahunList' => $tahunList
         ]);
     }
 }

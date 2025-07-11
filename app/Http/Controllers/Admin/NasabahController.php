@@ -18,14 +18,16 @@ class NasabahController extends Controller
         if ($search) {
             $query->where('no_reg', 'like', '%' . $search . '%');
         }
-        $nasabahs = $query->get()->map(function($n) {
+        // Gunakan paginate, lalu hitung saldo pada setiap item
+        $nasabahs = $query->paginate(10);
+        $nasabahs->getCollection()->transform(function($n) {
             $totalSetor = \DB::table('transaksi_setor')
                 ->where('nasabah_id', $n->id)
                 ->sum('total_pendapatan');
             $totalTarik = \DB::table('transaksi_tarik')
                 ->where('nasabah_id', $n->id)
                 ->sum('jumlah_tarik');
-            $n->saldo = ($totalSetor * 0.98) - $totalTarik; // saldo = total transaksi setor dipotong 2% - total penarikan
+            $n->saldo = ($totalSetor * 0.98) - $totalTarik;
             return $n;
         });
         return view('admin.nasabah.index', compact('nasabahs', 'search'));
