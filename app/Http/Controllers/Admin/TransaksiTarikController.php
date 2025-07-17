@@ -6,121 +6,109 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\TransaksiTarik;
 use App\Models\User;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Validation\ValidationException;
 
 class TransaksiTarikController extends Controller
 {
+    /**
+     * Menampilkan halaman utama dengan riwayat dan form pencarian.
+     */
     public function index(Request $request)
     {
-        $notifikasi = null;
         $nasabah = null;
-        $saldoAkhir = 0;
+        $saldoAkhir = 0; // Tetap kirim variabel ini agar view tidak error
+
         if ($request->filled('no_reg')) {
-            $nasabah = User::where('role', 'nasabah')
-                ->where('no_reg', $request->no_reg)
-                ->first();
+            $nasabah = User::where('no_reg', $request->no_reg)->where('role', 'nasabah')->first();
             if ($nasabah) {
-                $saldo = DB::table('transaksi_setor')->where('nasabah_id', $nasabah->id)->sum('total_pendapatan') * 0.98;
-                $totalTarik = DB::table('transaksi_tarik')->where('nasabah_id', $nasabah->id)->sum('jumlah_tarik');
-                $saldoAkhir = $saldo - $totalTarik;
-            } else {
-                $notifikasi = 'Nasabah tidak ditemukan.';
+                // Panggil accessor saldo yang sudah kita buat di Model User
+                $saldoAkhir = $nasabah->saldo_tersedia;
             }
         }
-        return view('admin.transaksi_tarik.index', compact('nasabah', 'saldoAkhir', 'notifikasi'));
+        
+        // Ambil data riwayat penarikan dengan paginasi
+        $tarik = TransaksiTarik::with('nasabah')->latest('tgl_tarik')->paginate(10);
+        
+        return view('admin.transaksi_tarik.index', compact('nasabah', 'saldoAkhir', 'tarik'));
     }
 
+    /**
+     * Menampilkan form untuk melakukan penarikan.
+     */
     public function create(Request $request)
     {
-        // Jika ada nasabah_id di query, ambil data nasabah dan saldo saja
-        if ($request->filled('nasabah_id')) {
-            $nasabah = \App\Models\User::where('role', 'nasabah')->findOrFail($request->nasabah_id);
-            $saldo = DB::table('transaksi_setor')->where('nasabah_id', $nasabah->id)->sum('total_pendapatan') * 0.98;
-            $totalTarik = DB::table('transaksi_tarik')->where('nasabah_id', $nasabah->id)->sum('jumlah_tarik');
-            $saldoAkhir = $saldo - $totalTarik;
-            return view('admin.transaksi_tarik.create', [
-                'nasabah' => $nasabah,
-                'saldoAkhir' => $saldoAkhir
-            ]);
-        }
-        // Default: tampilkan semua nasabah
-        $nasabah = User::where('role', 'nasabah')
-            ->withSum(['transaksiSetor as transaksi_setor_sum' => function($q) {
-                $q->select(DB::raw('COALESCE(SUM(total_pendapatan),0)'));
-            }], 'total_pendapatan')
-            ->withSum(['transaksiTarik as transaksi_tarik_sum' => function($q) {
-                $q->select(DB::raw('COALESCE(SUM(jumlah_tarik),0)'));
-            }], 'jumlah_tarik')
-            ->get();
-        return view('admin.transaksi_tarik.create', compact('nasabah'));
+        $request->validate(['nasabah_id' => 'required|exists:users,id']);
+        $nasabah = User::findOrFail($request->nasabah_id);
+        
+        // Panggil accessor saldo dari Model User
+        $saldoAkhir = $nasabah->saldo_tersedia;
+
+        return view('admin.transaksi_tarik.create', compact('nasabah', 'saldoAkhir'));
     }
 
+    /**
+     * Menyimpan transaksi tarik baru dan membuat nota.
+     */
     public function store(Request $request)
     {
-        $request->validate([
-            'nasabah_id' => 'required|exists:users,id',
-            'tgl_tarik' => 'required|date',
-            'jumlah_tarik' => 'required|numeric|min:1',
-            'keterangan' => 'nullable|string',
-        ]);
+       // 1. Validasi input dari form
+    $validated = $request->validate([
+        'nasabah_id' => 'required|exists:users,id',
+        'tgl_tarik' => 'required|date',
+        'jumlah_tarik' => 'required|numeric|min:1',
+        'keterangan' => 'nullable|string',
+    ]);
 
-        $nasabah = User::findOrFail($request->nasabah_id);
-        $saldo = DB::table('transaksi_setor')->where('nasabah_id', $nasabah->id)->sum('total_pendapatan') * 0.98;
-        $totalTarik = DB::table('transaksi_tarik')->where('nasabah_id', $nasabah->id)->sum('jumlah_tarik');
-        $saldoAkhir = $saldo - $totalTarik;
-        if ($request->jumlah_tarik > $saldoAkhir) {
-            return back()->withErrors(['jumlah_tarik' => 'Saldo tidak mencukupi untuk penarikan ini.'])->withInput();
-        }
-
-        $trx = TransaksiTarik::create($request->all());
-
-        // Generate PDF nota setelah simpan
-        $trx->load('nasabah');
-        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('admin.transaksi_tarik.nota', compact('trx', 'nasabah', 'saldoAkhir'));
-        $filename = 'nota_tarik_saldo_' . $trx->id_tarik . '_' . time() . '.pdf';
-        $path = storage_path('app/public/nota/' . $filename);
-        // Pastikan folder ada
-        if (!file_exists(storage_path('app/public/nota'))) {
-            mkdir(storage_path('app/public/nota'), 0777, true);
-        }
-        $pdf->save($path);
-        // Buat url publik (gunakan route download, bukan asset langsung)
-        // $publicUrl = asset('storage/nota/' . $filename);
-        // Redirect ke index dengan session flash untuk trigger download
-        // return redirect()->route('admin.transaksi_tarik.index')->with('nota_pdf', $publicUrl);
-        // Ganti dengan route download
-        $downloadUrl = route('admin.transaksi_tarik.downloadNota', ['filename' => $filename]);
-        return redirect()->route('admin.transaksi_tarik.index')->with('nota_pdf', $downloadUrl);
+    $nasabah = User::findOrFail($validated['nasabah_id']);
+    
+    // 2. Cek apakah saldo mencukupi
+    $saldoTersedia = $nasabah->saldo_tersedia;
+    if ($validated['jumlah_tarik'] > $saldoTersedia) {
+        // Jika tidak cukup, kembalikan dengan pesan error
+        return back()->withErrors(['jumlah_tarik' => 'Saldo tidak mencukupi. Saldo tersedia: Rp' . number_format($saldoTersedia, 0, ',', '.')])->withInput();
     }
 
-    public function exportPdf(Request $request)
-    {
-        $query = TransaksiTarik::with('nasabah')->orderByDesc('tgl_tarik');
-        if ($request->filled('no_reg')) {
-            $query->whereHas('nasabah', function($q) use ($request) {
-                $q->where('no_reg', 'like', '%' . $request->no_reg . '%');
-            });
-        }
-        if ($request->filled('bulan')) {
-            $query->whereMonth('tgl_tarik', $request->bulan);
-        }
-        if ($request->filled('tahun')) {
-            $query->whereYear('tgl_tarik', $request->tahun);
-        }
-        $tarik = $query->get();
-        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('admin.transaksi_tarik.pdf', compact('tarik'));
-        return $pdf->download('data_transaksi_tarik.pdf');
+    // 3. Simpan transaksi tarik ke database
+    $trx = TransaksiTarik::create($validated);
+
+    // 4. Siapkan data yang akan dicetak di nota
+    $trx->load('nasabah'); // Memuat relasi nasabah untuk data yang update
+    $pdfData = [
+        'trx' => $trx,
+        'nasabah' => $nasabah,
+        'saldoAkhir' => $saldoTersedia - $trx->jumlah_tarik // Hitung sisa saldo
+    ];
+
+    // 5. Buat objek PDF dari view
+    $pdf = Pdf::loadView('admin.transaksi_tarik.nota', $pdfData);
+
+    // 6. Buat nama file yang konsisten dan simpan PDF ke storage
+    $filename = 'nota_tarik_' . $trx->id_tarik . '.pdf';
+    $path = 'nota/' . $filename;
+    Storage::disk('public')->put($path, $pdf->output());
+
+    // 7. Redirect kembali ke halaman index dengan pesan sukses dan nama file nota
+    return redirect()->route('admin.transaksi_tarik.index')
+        ->with('success', 'Penarikan saldo berhasil.')
+        ->with('nota_filename', $filename); // Kirim nama file, bukan URL
     }
 
+    /**
+     * Mengunduh file nota yang sudah dibuat.
+     */
     public function downloadNota($filename)
     {
-        $path = storage_path('app/public/nota/' . $filename);
+        $safeFilename = basename($filename);
+        $path = storage_path('app/public/nota/' . $safeFilename);
+
         if (!file_exists($path)) {
-            abort(404);
+            abort(404, 'File nota tidak ditemukan.');
         }
-        return response()->file($path, [
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
-        ]);
+        return response()->download($path);
     }
+
+    // ... (method exportPdf Anda bisa disederhanakan dengan Eloquent juga) ...
 }

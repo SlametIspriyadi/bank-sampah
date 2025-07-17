@@ -51,7 +51,12 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'no.cache'])->group(
     Route::get('/transaksi/create', [TransaksiController::class, 'create'])->name('transaksi.create');
     Route::post('/transaksi/store', [TransaksiController::class, 'store'])->name('transaksi.store');
     Route::get('/transaksi/export/pdf', [TransaksiController::class, 'exportPdf'])->name('transaksi.exportPdf');
-
+   Route::get('/transaksi/export-pdf', [\App\Http\Controllers\Admin\TransaksiController::class, 'exportPdf'])->name('transaksi.exportPdf');
+   // PASTIKAN RUTE INI ADA
+        Route::get('/nota/{filename}', [\App\Http\Controllers\Admin\TransaksiController::class, 'downloadNota'])->name('downloadNota');
+    
+     // PASTIKAN RUTE INI ADA DAN NAMA-NYA BENAR
+    Route::get('/transaksi/sukses/{transaksi}', [\App\Http\Controllers\Admin\TransaksiController::class, 'showSuccess'])->name('transaksi.sukses');
     // CRUD Transaksi Tarik
     Route::get('/transaksi-tarik', [\App\Http\Controllers\Admin\TransaksiTarikController::class, 'index'])->name('transaksi_tarik.index');
     Route::get('/transaksi-tarik/create', [\App\Http\Controllers\Admin\TransaksiTarikController::class, 'create'])->name('transaksi_tarik.create');

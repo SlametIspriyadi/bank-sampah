@@ -1,57 +1,157 @@
+@php use Carbon\Carbon; @endphp
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title>Laporan Transaksi Setor</title>
     <style>
-        body { font-family: Arial, sans-serif; font-size: 12px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { border: 1px solid #333; padding: 6px 8px; text-align: left; }
-        th { background: #eee; }
+        body { 
+            font-family: 'Helvetica', DejaVu Sans, sans-serif; 
+            font-size: 12px; 
+            color: #333;
+        }
+        .header {
+            width: 100%;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #333;
+            padding-bottom: 15px;
+        }
+        .header .logo {
+            float: left;
+            width: 80px;
+            height: 80px;
+        }
+        .header .title-container {
+            margin-left: 95px;
+            text-align: left;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 20px;
+            color: #1a8c3a; /* Warna hijau tema */
+        }
+        .header h2 {
+            margin: 5px 0 0;
+            font-size: 16px;
+        }
+        .header p {
+            margin: 2px 0 0;
+            font-size: 12px;
+        }
+        .clearfix::after {
+            content: "";
+            clear: both;
+            display: table;
+        }
+        .filter-info { 
+            font-size: 12px; 
+            margin-top: 25px; 
+            margin-bottom: 15px; 
+            padding: 10px;
+            background-color: #f5f5f5;
+            border-radius: 5px;
+        }
+        .content-table { 
+            width: 100%; 
+            border-collapse: collapse; 
+        }
+        .content-table th, .content-table td { 
+            border: 1px solid #ccc; 
+            padding: 8px; 
+            text-align: left; 
+        }
+        .content-table thead { 
+            background-color: #e9e9e9; 
+            font-weight: bold;
+        }
+        .content-table tbody tr:nth-of-type(even) { 
+            background-color: #f9f9f9;
+        }
+        .text-right { 
+            text-align: right; 
+        }
+        .text-center { 
+            text-align: center; 
+        }
+        .footer { 
+            position: fixed; 
+            bottom: -30px; 
+            left: 0px; 
+            right: 0px; 
+            height: 50px; 
+            text-align: center; 
+            font-size: 10px; 
+            color: #777; 
+        }
+        .footer .page-number:before { 
+            content: "Halaman " counter(page); 
+        }
     </style>
 </head>
 <body>
-    <h2>Laporan Transaksi Setor</h2>
-    <table>
+
+    <div class="header clearfix">
+        <img class="logo" src="{{ public_path('img/logo.png') }}" alt="Logo">
+        <div class="title-container">
+            <h1>Bank Sampah Ngalam Waste Bank</h1>
+            <h2>Laporan Transaksi Setor</h2>
+            <p>Cabang Tanjung Lestari</p>
+            <p>Dicetak pada: {{ now()->translatedFormat('d F Y, H:i') }}</p>
+        </div>
+    </div>
+
+    @if(!empty(array_filter(request()->only(['no_reg', 'bulan', 'tahun']))))
+        <div class="filter-info">
+            <strong>Filter Laporan:</strong>
+            @if(request('no_reg')) No. Reg: {{ request('no_reg') }}; @endif
+            @if(request('bulan')) Bulan: {{ Carbon::create()->month(request('bulan'))->translatedFormat('F') }}; @endif
+            @if(request('tahun')) Tahun: {{ request('tahun') }} @endif
+        </div>
+    @endif
+
+    <table class="content-table">
         <thead>
             <tr>
-                <th>No</th>
+                <th class="text-center">No</th>
                 <th>Tanggal</th>
-                <th>No Reg</th>
                 <th>Nama Nasabah</th>
-                <th>Detil Sampah</th>
-                <th>Total Pendapatan</th>
+                <th>Detail Sampah</th>
+                <th class="text-right">Total Pendapatan</th>
             </tr>
         </thead>
         <tbody>
-            @foreach($setor as $i => $trx)
+            @forelse($setor as $i => $trx)
             <tr>
-                <td>{{ $i+1 }}</td>
-                <td>{{ $trx->tgl_setor }}</td>
-                <td>{{ $trx->nasabah->no_reg ?? '-' }}</td>
-                <td>{{ $trx->nasabah->name ?? '-' }}</td>
+                <td class="text-center">{{ $i + 1 }}</td>
+                <td style="width: 15%;">{{ Carbon::parse($trx->tgl_setor)->format('d-m-Y') }}</td>
+                <td style="width: 20%;">
+                    <div>{{ $trx->nasabah->name ?? '-' }}</div>
+                    <div style="font-size: 10px; color: #666;">No. Reg: {{ $trx->nasabah->no_reg ?? '-' }}</div>
+                </td>
                 <td>
-                    @if($trx->detil_sampah)
-                        @php
-                            $items = array_filter(array_map('trim', explode(';', $trx->detil_sampah)));
-                        @endphp
-                        <ul style="margin:0; padding-left:15px;">
-                            @foreach($items as $item)
-                                @foreach(explode(',', $item) as $subitem)
-                                    @if(trim($subitem) !== '')
-                                        <li>{{ trim($subitem) }}</li>
-                                    @endif
-                                @endforeach
+                    @if(count($trx->detail_sampah_formatted) > 0)
+                        <ul style="margin:0; padding-left:15px; list-style-type: disc;">
+                            @foreach($trx->detail_sampah_formatted as $item)
+                                <li>{{ $item }}</li>
                             @endforeach
                         </ul>
                     @else
                         -
                     @endif
                 </td>
-                <td>Rp {{ number_format($trx->total_pendapatan, 0, ',', '.') }}</td>
+                <td class="text-right" style="width: 20%;">Rp{{ number_format($trx->total_pendapatan, 0, ',', '.') }}</td>
             </tr>
-            @endforeach
+            @empty
+            <tr>
+                <td colspan="5" class="text-center">Tidak ada data transaksi yang cocok dengan filter yang diterapkan.</td>
+            </tr>
+            @endforelse
         </tbody>
     </table>
+
+    <div class="footer">
+        <p class="page-number"></p>
+    </div>
+
 </body>
 </html>

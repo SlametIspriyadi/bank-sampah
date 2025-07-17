@@ -1,89 +1,93 @@
 @extends('admin.base')
 
-@section('title', 'Transaksi Setor')
-@section('header', 'Transaksi Setor')
+@section('title', 'Transaksi Setor Sampah')
+@section('header', 'Transaksi Setor Sampah')
 
 @section('content')
-<div class="bg-white p-6 rounded shadow">
-    {{-- Bagian notifikasi yang dihapus --}}
-    {{--
+<div class="p-6 sm:p-8 bg-white rounded-2xl shadow-lg">
+
+    {{-- Notifikasi Sukses (Hanya menampilkan pesan) --}}
     @if(session('success'))
-        <div id="notif-success" class="mb-4 p-3 bg-green-100 text-green-800 rounded">{{ session('success') }}</div>
-    @endif
-    @if(session('error'))
-        <div id="notif-error" class="mb-4 p-3 bg-red-100 text-red-800 rounded">{{ session('error') }}</div>
-    @endif
-    @if($errors->any())
-        <div id="notif-error" class="mb-4 p-3 bg-red-100 text-red-800 rounded">
-            <ul class="mb-0 pl-4 list-disc">
-                @foreach($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
+        <div id="notification" class="transition-opacity duration-300 ease-out mb-6 p-4 flex items-center gap-3 bg-green-100 text-green-800 rounded-lg shadow">
+            <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            <span>{{ session('success') }}</span>
         </div>
     @endif
-    <script>
-        setTimeout(function() {
-            let notif = document.getElementById('notif-success');
-            if(notif) notif.style.display = 'none';
-            let notifErr = document.getElementById('notif-error');
-            if(notifErr) notifErr.style.display = 'none';
-        }, 2500);
-    </script>
-    --}}
-    <div class="flex justify-between items-end mb-4">
-        <h2 class="text-xl font-semibold">Transaksi Setor</h2>
-        <div class="flex flex-col items-end gap-2">
-            <form method="GET" action="" class="flex items-center gap-2 mb-2">
-                <input type="text" name="no_reg" value="{{ request('no_reg') }}" placeholder="Cari No Reg" class="border px-3 py-2 rounded" />
-                <button type="submit" class="px-4 py-2 rounded bg-green-600 text-white hover:bg-green-700">Cari</button>
-            </form>
+    
+    {{-- Notifikasi Error --}}
+    @if(session('error'))
+        <div id="notification" class="transition-opacity duration-300 ease-out mb-6 p-4 flex items-center gap-3 bg-red-100 text-red-800 rounded-lg shadow">
+            <svg class="w-6 h-6 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" /></svg>
+            <span>{{ session('error') }}</span>
+        </div>
+    @endif
+
+    {{-- Blok Aksi Terpisah dengan Tombol Biru (Hanya Muncul Setelah Transaksi) --}}
+    @if(session('nota_setor'))
+    <div class="mb-8 p-6 bg-blue-50 border-2 border-dashed border-blue-200 rounded-xl text-center">
+        <h3 class="font-bold text-lg text-blue-800">Transaksi Sebelumnya Berhasil!</h3>
+        <p class="text-gray-600 mt-1">Anda dapat mencetak atau mengunduh nota transaksi terakhir di sini.</p>
+        <div class="mt-4">
+            <a href="{{ route('admin.transaksi.downloadNota', ['filename' => basename(parse_url(session('nota_setor'), PHP_URL_PATH))]) }}" target="_blank" class="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-blue-600 text-white hover:bg-blue-700 shadow-lg font-semibold text-base">
+                <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0110.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0l.229 2.523a1.125 1.125 0 01-1.12 1.227H7.231a1.125 1.125 0 01-1.12-1.227L6.34 18m11.318 0h1.091A2.25 2.25 0 0021 15.75V9.456c0-1.081-.768-2.015-1.837-2.175a48.055 48.055 0 00-1.913-.247M6.34 18H5.25A2.25 2.25 0 013 15.75V9.456c0-1.081.768-2.015 1.837-2.175a48.041 48.041 0 011.913-.247m10.5 0a48.536 48.536 0 00-10.5 0m10.5 0V3.375c0-.621-.504-1.125-1.125-1.125h-8.25c-.621 0-1.125.504-1.125 1.125v3.659M18 10.5h.008v.008H18V10.5z" /></svg>
+                Cetak Nota Terakhir
+            </a>
         </div>
     </div>
-    <div class="overflow-x-auto">
+    @endif
+
+    <div class="mb-6">
+        <h2 class="text-2xl font-bold text-gray-800">Setor Sampah</h2>
+        <p class="text-gray-500 mt-1">Cari nasabah berdasarkan Nomor Registrasi untuk memulai transaksi.</p>
+        <form method="GET" action="{{ route('admin.transaksi.index') }}" class="flex items-center gap-3 mt-4">
+            <div class="relative flex-grow">
+                <input type="text" name="no_reg" value="{{ request('no_reg') }}" placeholder="Masukkan Nomor Registrasi Nasabah..." class="w-full border-gray-300 rounded-lg shadow-sm px-4 py-3 pl-12 text-base focus:ring-2 focus:ring-green-500" autofocus />
+                <svg class="w-6 h-6 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" /></svg>
+            </div>
+            <button type="submit" class="px-6 py-3 rounded-lg bg-green-600 text-white hover:bg-green-700 font-semibold flex items-center gap-2">
+                <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" /></svg>
+                <span>Cari</span>
+            </button>
+        </form>
+    </div>
+
+    <div class="min-h-[200px] flex items-center justify-center bg-gray-50 rounded-xl p-4">
         @if(request('no_reg') && isset($nasabah))
-            <table class="min-w-full mb-6">
-                <thead>
-                    <tr class="bg-green-600 text-white">
-                        <th class="px-4 py-2">No Reg</th>
-                        <th class="px-4 py-2">Nama</th>
-                        <th class="px-4 py-2">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td class="border px-4 py-2">{{ $nasabah->no_reg }}</td>
-                        <td class="border px-4 py-2">{{ $nasabah->name }}</td>
-                        <td class="border px-4 py-2">
-                            <a href="{{ route('admin.transaksi.create', ['nasabah_id' => $nasabah->id]) }}" class="px-4 py-2 rounded bg-green-600 text-white hover:bg-green-700">Setor Sampah</a>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="w-full max-w-2xl text-center">
+                <h3 class="text-lg font-semibold text-gray-500">Nasabah Ditemukan</h3>
+                <p class="text-3xl font-bold text-gray-800 mt-2">{{ $nasabah->name }}</p>
+                <div class="mt-6">
+                    <a href="{{ route('admin.transaksi.create', ['nasabah_id' => $nasabah->id]) }}" class="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-green-600 text-white hover:bg-green-700 shadow-lg font-semibold text-lg">
+                        <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" /></svg>
+                        <span>Lanjutkan Setor Sampah</span>
+                    </a>
+                </div>
+            </div>
         @elseif(request('no_reg') && !isset($nasabah))
-            <div class="mb-4 p-3 bg-yellow-100 text-yellow-800 rounded">Nasabah tidak ditemukan.</div>
+            <div class="text-center text-yellow-700">
+                <svg class="w-16 h-16 mx-auto text-yellow-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" /></svg>
+                <p class="mt-4 font-semibold text-lg">Nasabah Tidak Ditemukan</p>
+            </div>
+        @else
+            <div class="text-center text-gray-500">
+                <svg class="w-16 h-16 mx-auto text-gray-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" /></svg>
+                <p class="mt-4 font-semibold text-lg">Silakan Cari Nasabah</p>
+            </div>
         @endif
     </div>
-    @if(session('success'))
-        <div id="notif-success" class="mb-4 p-3 bg-green-100 text-green-800 rounded">{{ session('success') }}</div>
-    @endif
-    @if(session('nota_setor'))
-        <div style="color:red">DEBUG: {{ session('nota_setor') }}</div>
-        <script>
-            setTimeout(function() {
-                var url = @json(session('nota_setor'));
-                if (url) {
-                    var a = document.createElement('a');
-                    a.href = url;
-                    a.target = '_blank';
-                    a.download = '';
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                }
-            }, 500);
-        </script>
-    @endif
-    {{-- Hapus debug session dan SESSION: {{ json_encode(session()->all()) }} --}}
 </div>
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const notification = document.getElementById('notification');
+    if (notification) {
+        setTimeout(() => {
+            notification.style.opacity = '0';
+            setTimeout(() => notification.remove(), 500);
+        }, 5000);
+    }
+});
+</script>
+@endpush

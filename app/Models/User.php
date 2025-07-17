@@ -6,6 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class User extends Authenticatable
 {
@@ -53,6 +54,23 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    protected function saldoTersedia(): Attribute
+    {
+        return Attribute::make(
+            get: function () {
+                // Ambil total pendapatan dari semua transaksi setor
+                $totalSetor = $this->transaksiSetor()->sum('total_pendapatan');
+
+                // Ambil total penarikan dari semua transaksi tarik
+                $totalTarik = $this->transaksiTarik()->sum('jumlah_tarik');
+                
+                // Hitung saldo akhir (dengan potongan admin 2% jika ada)
+                // Anda bisa menghapus * 0.98 jika tidak ada potongan
+                return ($totalSetor * 0.98) - $totalTarik;
+            }
+        );
     }
 
     public function transaksiSetor()

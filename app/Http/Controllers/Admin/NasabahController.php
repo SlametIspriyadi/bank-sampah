@@ -44,51 +44,67 @@ class NasabahController extends Controller
         return view('admin.nasabah.edit', compact('nasabah'));
     }
 
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'no_reg' => 'required|string|max:30|unique:users,no_reg',
-            'jenis_kelamin' => 'required|in:L,P',
-            'tempat_lahir' => 'required|string|max:100',
-            'tgl_lahir' => 'required|date',
-            'no_hp' => 'nullable|string|max:20',
-            'alamat' => 'nullable|string',
-            'password' => 'required|string|min:6',
-        ]);
+   public function store(Request $request)
+{
+    // Validasi data dengan menambahkan 'no_reg'
+    $request->validate([
+        // Pastikan 'no_reg' unik di tabel users (atau nasabahs), kolom 'no_reg'
+        'no_reg' => 'required|string|max:255|unique:users,no_reg',
+        'name' => 'required|string|max:255',
+        'jenis_kelamin' => 'required|in:L,P',
+        'tempat_lahir' => 'required|string|max:255',
+        'tgl_lahir' => 'required|date',
+        'no_hp' => 'nullable|string|max:15',
+        'alamat' => 'nullable|string',
+        'password' => 'required|string|min:6|confirmed',
+    ]);
 
-        $user = User::create([
-            'name' => $validated['name'],
-            'no_reg' => $validated['no_reg'],
-            'jenis_kelamin' => $validated['jenis_kelamin'],
-            'tempat_lahir' => $validated['tempat_lahir'],
-            'tgl_lahir' => $validated['tgl_lahir'],
-            'no_hp' => $validated['no_hp'] ?? null,
-            'alamat' => $validated['alamat'] ?? null,
-            'password' => Hash::make($validated['password']),
-            'saldo' => 0, // saldo awal selalu 0, dihitung dari transaksi setor
-            'role' => 'nasabah',
-            'tgl_registrasi' => now(),
-        ]);
+    // Menyiapkan data untuk disimpan dari request
+    $data = $request->except('password_confirmation');
+    
+    // LOGIKA OTOMATIS DIHAPUS. no_reg sekarang datang dari form.
+    
+    // Set tanggal registrasi otomatis
+    $data['tgl_registrasi'] = now();
 
-        return redirect()->route('admin.nasabah.index')->with('success', 'Nasabah berhasil ditambahkan!');
-    }
-    public function update(Request $request, $id)
-    {
-        $nasabah = \App\Models\User::findOrFail($id);
-        $validated = $request->validate([
-            'no_reg' => 'required|string|max:30|unique:users,no_reg,' . $nasabah->id,
-            'name' => 'required|string|max:255',
-            'jenis_kelamin' => 'required|in:L,P',
-            'tempat_lahir' => 'required|string|max:100',
-            'tgl_lahir' => 'required|date',
-            'no_hp' => 'nullable|string|max:20',
-            'alamat' => 'nullable|string',
-            'tgl_registrasi' => 'required|date',
-        ]);
-        $nasabah->update($validated);
-        return redirect()->route('admin.nasabah.index')->with('success', 'Data nasabah berhasil diupdate!');
-    }
+    // Enkripsi password sebelum disimpan
+    $data['password'] = Hash::make($request->password);
+    
+    // Simpan ke database
+    \App\Models\User::create($data); 
+
+    return redirect()->route('admin.nasabah.index')->with('success', 'Data nasabah baru dengan No. Reg ' . $request->no_reg . ' berhasil ditambahkan.');
+}
+   public function update(Request $request, $id)
+{
+    // Validasi data yang masuk
+    $request->validate([
+        'no_reg' => 'required|string|max:255|unique:users,no_reg,' . $id,
+        'name' => 'required|string|max:255',
+        'jenis_kelamin' => 'required|in:L,P',
+        // Tambahkan validasi lain jika perlu
+    ]);
+
+    // 1. Cari nasabah berdasarkan ID
+    $nasabah = User::findOrFail($id);
+
+    // 2. Update setiap kolom satu per satu secara manual
+    // Metode ini tidak terpengaruh oleh masalah Mass Assignment ($fillable)
+    $nasabah->no_reg = $request->no_reg;
+    $nasabah->name = $request->name;
+    $nasabah->jenis_kelamin = $request->jenis_kelamin;
+    $nasabah->tempat_lahir = $request->tempat_lahir;
+    $nasabah->tgl_lahir = $request->tgl_lahir;
+    $nasabah->no_hp = $request->no_hp;
+    $nasabah->alamat = $request->alamat;
+    $nasabah->tgl_registrasi = $request->tgl_registrasi;
+
+    // 3. Simpan perubahan ke database
+    $nasabah->save();
+
+    // 4. Redirect kembali dengan pesan sukses
+    return redirect()->route('admin.nasabah.index')->with('success', 'Data nasabah berhasil diperbarui.');
+}
     public function destroy($id)
     {
         $nasabah = \App\Models\User::find($id);
