@@ -13,7 +13,7 @@
                 <h2 class="text-2xl font-bold text-gray-800">Laporan Transaksi Setor</h2>
                 <p class="text-sm text-gray-500 mt-1">Filter dan lihat semua riwayat transaksi setor.</p>
             </div>
-            <a href="{{ route('admin.laporan.laporan_setor.pdf', request()->all()) }}" target="_blank" class="flex-shrink-0 inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 font-semibold transition-colors">
+            <a href="{{ route('admin.laporan.laporan_setor.pdf') }}?{{ http_build_query(request()->query()) }}" target="_blank" class="flex-shrink-0 inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 font-semibold transition-colors">
                 <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75l3 3m0 0l3-3m-3 3v-7.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                 <span>Export PDF</span>
             </a>
