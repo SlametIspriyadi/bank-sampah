@@ -81,6 +81,32 @@
             font-weight: bold;
             color: #2563eb;
         }
+
+        /* ----- CSS BARU UNTUK TANDA TANGAN ----- */
+        .signatures-section {
+            margin-top: 60px;
+            width: 100%;
+        }
+        .signature-box {
+            width: 40%; /* Lebar setiap kolom tanda tangan */
+            float: left;
+            text-align: center;
+        }
+        .signature-box.right {
+            float: right;
+        }
+        .signature-box p {
+            margin: 0;
+            line-height: 1.5;
+        }
+        .signature-space {
+            height: 60px; /* Ruang untuk tanda tangan */
+        }
+        .signature-name {
+            font-weight: bold;
+        }
+        /* -------------------------------------- */
+
         .footer { 
             margin-top: 40px; 
             text-align: center; 
@@ -134,6 +160,18 @@
             </table>
         </div>
 
+        <div class="signatures-section clearfix">
+            <div class="signature-box left">
+                <p>Nasabah,</p>
+                <div class="signature-space"></div>
+                <p class="signature-name">({{ $nasabah->name ?? '....................' }})</p>
+            </div>
+            <div class="signature-box right">
+                <p>Petugas Bank Sampah,</p>
+                <div class="signature-space"></div>
+                <p class="signature-name">(Sri Bidayati)</p>
+            </div>
+        </div>
         <div class="footer">
             <p>Penarikan saldo telah berhasil diproses.</p>
             <p>Simpan nota ini sebagai bukti transaksi yang sah.</p>

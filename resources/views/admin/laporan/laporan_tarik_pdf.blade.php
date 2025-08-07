@@ -50,6 +50,7 @@
             padding: 10px;
             background-color: #f5f5f5;
             border-radius: 5px;
+            border: 1px solid #eee;
         }
         .content-table { 
             width: 100%; 
@@ -86,6 +87,26 @@
         .footer .page-number:before { 
             content: "Halaman " counter(page); 
         }
+
+        /* ----- CSS BARU UNTUK TANDA TANGAN ----- */
+        .signature-section {
+            margin-top: 50px;
+            width: 280px;
+            float: right;
+            text-align: center;
+        }
+        .signature-section p {
+            margin: 0;
+            line-height: 1.6;
+        }
+        .signature-space {
+            height: 70px; /* Jarak untuk tanda tangan */
+        }
+        .signature-name {
+            font-weight: bold;
+            text-decoration: underline;
+        }
+        /* -------------------------------------- */
     </style>
 </head>
 <body>
@@ -133,11 +154,21 @@
             </tr>
             @empty
             <tr>
-                <td colspan="5" class="text-center">Tidak ada data transaksi yang cocok dengan filter yang diterapkan.</td>
+                <td colspan="5" class="text-center" style="padding: 20px;">Tidak ada data transaksi yang cocok dengan filter yang diterapkan.</td>
             </tr>
             @endforelse
         </tbody>
     </table>
+
+    {{-- ----- BLOK HTML BARU UNTUK TANDA TANGAN ----- --}}
+    <div class="signature-section">
+        <p>Malang, {{ now()->translatedFormat('d F Y') }}</p>
+        <p>Pengelola Bank Sampah,</p>
+        <div class="signature-space"></div>
+        <p class="signature-name">(Sri Bidayati)</p>
+    </div>
+    <div style="clear: both;"></div>
+    {{-- ------------------------------------------- --}}
 
     <div class="footer">
         <p class="page-number"></p>

@@ -78,6 +78,26 @@
             text-align: right;
         }
 
+        /* ----- CSS UNTUK TANDA TANGAN ----- */
+        .signature-container {
+            width: 300px;
+            margin-top: 40px;
+            float: right;
+            text-align: center;
+        }
+        .signature-container p {
+            margin: 0;
+            line-height: 1.5;
+        }
+        .signature-space {
+            height: 60px; /* Memberi ruang untuk tanda tangan basah */
+        }
+        .signature-name {
+            font-weight: bold;
+            text-decoration: underline;
+        }
+        /* -------------------------------------- */
+
         /* Footer (Nomor Halaman) */
         .footer {
             position: fixed;
@@ -132,7 +152,15 @@
         </tbody>
     </table>
 
-    <div class="footer">
+    <div class="signature-container">
+        <p>Malang, {{ now()->translatedFormat('j F Y') }}</p>
+        <p>Pengelola Bank Sampah,</p>
+        <div class="signature-space">
+            {{-- Ruang kosong untuk tanda tangan --}}
+        </div>
+        <p class="signature-name">Sri Bidayati</p>
+    </div>
+    <div style="clear: both;"></div> <div class="footer">
         <p class="page-number"></p>
     </div>
 
