@@ -111,6 +111,7 @@ public function store(Request $request)
     try {
         $nasabah = User::findOrFail($validated['nasabah_id']);
         $totalPendapatan = 0;
+        $totalKas = 0;
 
         $transaksi = Transaksi::create([
             'tgl_setor' => $validated['tgl_setor'],
@@ -124,17 +125,21 @@ public function store(Request $request)
             $berat = $validated['berat'][$i];
             $harga = $sampah->harga;
             $subtotal = $berat * $harga;
-            $totalPendapatan += $subtotal;
+            $potongan = $subtotal * 0.02;
+            $subtotalSetelahPotongan = $subtotal - $potongan;
+            $totalPendapatan += $subtotalSetelahPotongan;
+            $totalKas += $potongan;
 
             DetailTransaksi::create([
                 'transaksi_id' => $transaksi->id_transaksi,
                 'sampah_id' => $sampah_id,
                 'berat' => $berat,
                 'harga_saat_transaksi' => $harga,
-                'subtotal' => $subtotal,
+                'subtotal' => $subtotalSetelahPotongan,
+                'potongan' => $potongan,
             ]);
         }
-        
+
         $transaksi->total_pendapatan = $totalPendapatan;
         $transaksi->save();
         $nasabah->increment('saldo', $totalPendapatan);
@@ -143,12 +148,13 @@ public function store(Request $request)
             'transaksi' => $transaksi->load('details.sampah', 'nasabah'),
             'nasabah' => $nasabah,
             'totalPendapatan' => $totalPendapatan,
+            'totalKas' => $totalKas,
         ]);
-        
+
         $filename = 'nota_setor_' . $transaksi->id_transaksi . '.pdf';
         $path = 'nota_setor/' . $filename;
         Storage::disk('public')->put($path, $pdf->output());
-        
+
         DB::commit();
 
         // Mengirim 'nota_filename' ke session

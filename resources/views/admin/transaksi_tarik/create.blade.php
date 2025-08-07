@@ -49,7 +49,7 @@
             {{-- Tanggal Tarik --}}
             <div>
                 <label for="tgl_tarik" class="block mb-2 text-sm font-medium text-gray-700">Tanggal Tarik</label>
-                <input type="date" name="tgl_tarik" id="tgl_tarik" class="w-full px-4 py-2.5 text-base bg-gray-50 border @error('tgl_tarik') border-red-500 @else border-gray-300 @enderror rounded-lg focus:ring-2 focus:ring-green-500" value="{{ old('tgl_tarik', date('Y-m-d')) }}" required>
+                <input type="date" name="tgl_tarik" id="tgl_tarik" class="w-full px-4 py-2.5 text-base bg-gray-50 border @error('tgl_tarik') border-red-500 @else border-gray-300 @enderror rounded-lg focus:ring-2 focus:ring-green-500" value="{{ old('tgl_tarik', date('Y-m-d')) }}" required min="{{ date('Y-m-d') }}" max="{{ date('Y-m-d') }}">
                 @error('tgl_tarik')<p class="text-sm text-red-600 mt-1.5">{{ $message }}</p>@enderror
             </div>
             

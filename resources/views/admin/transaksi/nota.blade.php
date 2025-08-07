@@ -76,26 +76,43 @@
         .text-right { 
             text-align: right; 
         }
+
+        /* ----- PERBAIKAN PADA BAGIAN TOTAL ----- */
         .total-section { 
             margin-top: 20px; 
             padding-top: 15px;
             border-top: 2px solid #333;
             text-align: right; 
         }
+        .total-section span {
+            display: inline-block; /* Memastikan margin bisa diterapkan */
+            width: 100%;
+            margin-bottom: 4px;
+        }
+        .sub-total-line {
+            font-size: 15px;
+            color: #444;
+            font-weight: 600;
+        }
+        .deduction-line {
+            font-size: 15px;
+            font-weight: 600;
+            color: #d9534f; /* Warna merah untuk potongan */
+        }
         .total-section .grand-total { 
-            font-size: 18px; 
+            font-size: 19px; 
             color: #1a8c3a;
             font-weight: bold;
-            margin: 0;
+            margin-top: 5px; /* Memberi sedikit jarak */
         }
+        /* ----- AKHIR DARI PERBAIKAN ----- */
 
-        /* ----- CSS BARU UNTUK TANDA TANGAN ----- */
         .signatures-section {
             margin-top: 60px;
             width: 100%;
         }
         .signature-box {
-            width: 40%; /* Lebar setiap kolom tanda tangan */
+            width: 40%;
             float: left;
             text-align: center;
         }
@@ -107,12 +124,11 @@
             line-height: 1.5;
         }
         .signature-space {
-            height: 60px; /* Ruang untuk tanda tangan */
+            height: 60px;
         }
         .signature-name {
             font-weight: bold;
         }
-        /* -------------------------------------- */
 
         .footer { 
             margin-top: 40px; 
@@ -164,9 +180,9 @@
                 <tr>
                     <td>{{ $index + 1 }}</td>
                     <td>{{ $item['jenis_sampah'] ?? 'N/A' }}</td>
-                    <td>{{ $item['berat'] ?? 0 }} {{ $item['satuan'] ?? '' }}</td>
-                    <td>Rp{{ number_format($item['harga'] ?? 0, 0, ',', '.') }}</td>
-                    <td>Rp{{ number_format($item['subtotal'] ?? 0, 0, ',', '.') }}</td>
+                    <td class="text-right">{{ $item['berat'] ?? 0 }} {{ $item['satuan'] ?? '' }}</td>
+                    <td class="text-right">Rp{{ number_format($item['harga'] ?? 0, 0, ',', '.') }}</td>
+                    <td class="text-right">Rp{{ number_format($item['subtotal'] ?? 0, 0, ',', '.') }}</td>
                 </tr>
                 @empty
                 <tr>
@@ -176,9 +192,13 @@
             </tbody>
         </table>
 
+        {{-- ----- BAGIAN HTML YANG DIPERBAIKI ----- --}}
         <div class="total-section">
-            <span class="grand-total">Total Diterima: Rp{{ number_format($totalPendapatan ?? 0, 0, ',', '.') }}</span>
+            <span class="sub-total-line">Total Pendapatan: Rp{{ number_format($totalPendapatan ?? 0, 0, ',', '.') }}</span>
+            <span class="deduction-line">Potongan Kas (2%): - Rp{{ number_format(($totalPendapatan ?? 0) * 0.02, 0, ',', '.') }}</span>
+            <span class="grand-total">Total Masuk Saldo: Rp{{ number_format(($totalPendapatan ?? 0) * 0.98, 0, ',', '.') }}</span>
         </div>
+        {{-- ------------------------------------ --}}
 
         <div class="signatures-section clearfix">
             <div class="signature-box left">
@@ -192,6 +212,7 @@
                 <p class="signature-name">(Sri Bidayati)</p>
             </div>
         </div>
+        
         <div class="footer">
             <p>Terima kasih atas partisipasi Anda dalam menjaga kebersihan lingkungan.</p>
             <p>Simpan nota ini sebagai bukti transaksi yang sah.</p>

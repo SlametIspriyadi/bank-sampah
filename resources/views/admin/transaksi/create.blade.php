@@ -37,7 +37,7 @@
 
         <div class="mb-6">
             <label for="tgl_setor" class="block mb-2 text-sm font-medium text-gray-700">Tanggal Setor</label>
-            <input type="date" name="tgl_setor" id="tgl_setor" class="w-full md:w-1/2 px-4 py-2.5 text-base text-gray-900 bg-gray-50 border @error('tgl_setor') border-red-500 @else border-gray-300 @enderror rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500" value="{{ old('tgl_setor', date('Y-m-d')) }}" required>
+            <input type="date" name="tgl_setor" id="tgl_setor" class="w-full md:w-1/2 px-4 py-2.5 text-base text-gray-900 bg-gray-50 border @error('tgl_setor') border-red-500 @else border-gray-300 @enderror rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500" value="{{ old('tgl_setor', date('Y-m-d')) }}" required min="{{ date('Y-m-d') }}" max="{{ date('Y-m-d') }}">
             @error('tgl_setor')
                 <p class="text-sm text-red-600 mt-1.5">{{ $message }}</p>
             @enderror
